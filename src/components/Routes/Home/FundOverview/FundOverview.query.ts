@@ -32,6 +32,14 @@ export interface Fund {
       symbol: string;
     };
   };
+  holdings: {
+    id: string;
+    assetGav: BigNumber;
+    asset: {
+      id: string;
+      symbol: string;
+    };
+  }[];
   calculationsHistory: {
     id: string;
     sharePrice: BigNumber;
@@ -53,6 +61,10 @@ export interface FundProcessed {
   investments: number;
   version: string;
   status: string;
+  allocation: {
+    asset: string;
+    percentage: number;
+  }[];
 }
 
 export interface FundOverviewQueryResult {
@@ -92,6 +104,13 @@ const FundOverviewQuery = gql`
           symbol
         }
       }
+      holdings(orderBy: assetGav, orderDirection: desc, first: 2) {
+        assetGav
+
+        asset {
+          symbol
+        }
+      }
       calculationsHistory(orderBy: timestamp, orderDirection: desc, first: 2) {
         id
         sharePrice
@@ -103,29 +122,6 @@ const FundOverviewQuery = gql`
 
 export const useFundOverviewQuery = () => {
   const result = useTheGraphQuery<FundOverviewQueryResult, FundOverviewQueryVariables>(FundOverviewQuery);
-  const rates = useTokenRates('ETH');
 
-  const rate = rates.USD;
-
-  const funds = (result && result.data && result.data.funds) || [];
-  const processed = funds.map((item) => ({
-    id: item.id,
-    name: item.name,
-    address: item.id.substr(0, 8),
-    inception: item.createdAt,
-    aumEth: item.gav,
-    aumUsd: new BigNumber(item.gav).multipliedBy(rate),
-    sharePrice: item.sharePrice,
-    change: calculateChangeFromSharePrice(
-      item.calculationsHistory[0]?.sharePrice,
-      item.calculationsHistory[1]?.sharePrice
-    ),
-    shares: item.totalSupply,
-    denomination: item.accounting.denominationAsset.symbol,
-    investments: item.investments.length,
-    version: item.version.name,
-    status: item.isShutdown ? 'Not active' : 'Active',
-  }));
-
-  return [processed, result] as [FundProcessed[], typeof result];
+  return result;
 };

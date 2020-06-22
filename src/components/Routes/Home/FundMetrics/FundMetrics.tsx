@@ -22,8 +22,7 @@ export const FundMetrics: React.FC = () => {
   }
 
   const networkGav = fromTokenBaseUnit(metrics.state?.networkGav, 18);
-  const activeInvestors = metrics.state?.activeInvestors;
-  const nonActiveInvestors = metrics.state?.nonActiveInvestors;
+
   const activeFunds = metrics.state?.activeFunds;
   const nonActiveFunds = metrics.state?.nonActiveFunds;
   const allInvestments = metrics.state?.allInvestments;
@@ -44,14 +43,7 @@ export const FundMetrics: React.FC = () => {
                 </DictionaryData>
               </DictionaryEntry>
             )}
-            {activeInvestors && nonActiveInvestors && (
-              <DictionaryEntry>
-                <DictionaryLabel>Number of investors</DictionaryLabel>
-                <DictionaryData textAlign="right">
-                  {parseInt(activeInvestors ?? '0', 10) + parseInt(nonActiveInvestors ?? '0', 10)}
-                </DictionaryData>
-              </DictionaryEntry>
-            )}
+
             {allInvestments && (
               <DictionaryEntry>
                 <DictionaryLabel>Number of investments</DictionaryLabel>

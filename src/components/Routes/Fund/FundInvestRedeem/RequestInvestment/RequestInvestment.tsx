@@ -22,7 +22,6 @@ import { useInvestorTotalExposureQuery } from './InvestorTotalExposure.query';
 import { useTokenRates } from '~/components/Contexts/Rates/Rates';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
-import { Link } from '~/storybook/Link/Link';
 import { Token } from '@melonproject/melongql';
 import { SectionTitle } from '~/storybook/Title/Title';
 

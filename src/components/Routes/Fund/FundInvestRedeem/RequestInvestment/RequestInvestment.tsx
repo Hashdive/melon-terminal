@@ -25,6 +25,7 @@ import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenVa
 import { Link } from '~/storybook/Link/Link';
 import { Token } from '@melonproject/melongql';
 import { SectionTitle } from '~/storybook/Title/Title';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 
 export interface RequestInvestmentProps {
   fundAddress: string;
@@ -229,34 +230,49 @@ export const RequestInvestment = React.forwardRef(
 
     return (
       <Form formik={formik}>
-        <TokenValueInput
-          name="requestedShares"
-          label="Number of shares"
-          noIcon={true}
-          disabled={loading}
-          onChange={handleRequestedSharesChange}
-        />
+        <Tooltip
+          placement="top"
+          value="This parameter is either entered manually or calculated automatically based on the amount of asset you invest and the max premium to current share price. In the event that it is calculated automatically, it represents the LEAST number of shares you will be granted upon the execution of your investment request."
+        >
+          <TokenValueInput
+            name="requestedShares"
+            label="Number of shares"
+            noIcon={true}
+            disabled={loading}
+            onChange={handleRequestedSharesChange}
+          />
+        </Tooltip>
 
-        <TokenValueSelect
-          name="investmentAmount"
-          label={
-            <>
-              Amount and asset (your wallet's balance: <TokenValueDisplay value={tokenBalance} />)
-            </>
-          }
-          tokens={props.investableAssets.map((item) => item.token)}
-          disabled={loading}
-          onChange={handleInvestmentChange}
-        />
+        <Tooltip
+          placement="top"
+          value="This parameter is either entered manually or calculated automatically based on the number of shares requested and the max premium to current share price. In the event that it is calculated automatically, it represents the HIGHEST amount of the asset that will be withdrawn from your wallet upon the execution of your investment request."
+        >
+          <TokenValueSelect
+            name="investmentAmount"
+            label={
+              <>
+                Amount and asset (your wallet's balance: <TokenValueDisplay value={tokenBalance} />)
+              </>
+            }
+            tokens={props.investableAssets.map((item) => item.token)}
+            disabled={loading}
+            onChange={handleInvestmentChange}
+          />
+        </Tooltip>
 
         {initialPremium > 0 && (
-          <Select
-            name="premiumPercentage"
-            label="Maximum premium to current share price"
-            options={premiumOptions}
-            disabled={loading}
-            onChange={handlePremiumChange}
-          />
+          <Tooltip
+            placement="top"
+            value="Because investment requests made today are executed after tomorrow's price feed update, there's a chance that the value of a fund's shares could change dramatically in the interim. This parameter will prevent the execution of your investment request in the event that the share price increases by more than the value you've chosen."
+          >
+            <Select
+              name="premiumPercentage"
+              label="Maximum premium to current share price"
+              options={premiumOptions}
+              disabled={loading}
+              onChange={handlePremiumChange}
+            />
+          </Tooltip>
         )}
 
         {formik.values.acknowledgeLimitRequired && (

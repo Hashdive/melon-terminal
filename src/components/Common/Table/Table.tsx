@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy, SortByFn } from 'react-table';
+import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -145,13 +145,12 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
 
   return (
     <>
-      {filter}
-
+      {filter} {pagination}
+      <br />
       <Table {...props.table.getTableProps()}>
         <TableHeader>{header}</TableHeader>
         <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>
       </Table>
-
       {pagination}
     </>
   );

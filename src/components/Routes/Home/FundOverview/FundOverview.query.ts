@@ -35,9 +35,11 @@ export interface Fund {
   holdings: {
     id: string;
     assetGav: BigNumber;
+    amount: BigNumber;
     asset: {
       id: string;
       symbol: string;
+      decimals: number;
     };
   }[];
   calculationsHistory: {
@@ -80,7 +82,7 @@ const FundOverviewQuery = gql`
     funds(
       first: 1000
       where: { id_not: "0x1e3ef9a8fe3cf5b3440b0df8347f1888484b8dc2" }
-      orderBy: "sharePrice"
+      orderBy: "gav"
       orderDirection: "desc"
     ) {
       id
@@ -105,10 +107,13 @@ const FundOverviewQuery = gql`
         }
       }
       holdings(orderBy: assetGav, orderDirection: desc, first: 2) {
+        id
+        amount
         assetGav
-
         asset {
+          id
           symbol
+          decimals
         }
       }
       calculationsHistory(orderBy: timestamp, orderDirection: desc, first: 2) {

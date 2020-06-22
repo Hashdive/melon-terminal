@@ -1,5 +1,15 @@
 import React from 'react';
-import { Column, useTable, useSortBy, usePagination, useGlobalFilter, TableOptions, Row, Cell } from 'react-table';
+import {
+  Column,
+  useTable,
+  useSortBy,
+  usePagination,
+  useGlobalFilter,
+  TableOptions,
+  Row,
+  Cell,
+  useRowState,
+} from 'react-table';
 import { useFundOverviewQuery } from './FundOverview.query';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { CommonTable } from '~/components/Common/Table/Table';
@@ -9,68 +19,84 @@ import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenVa
 import BigNumber from 'bignumber.js';
 import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
+import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
 
 type RowData = {
   name: string;
   inception: Date;
-  version: string;
+  returnSinceInception: BigNumber;
+  returnSinceYesterday: BigNumber;
   holdings: TokenValue[];
   eth: BigNumber;
   usd: BigNumber;
-  btc: BigNumber;
-  active: boolean;
 };
 
 const columns: Column<RowData>[] = [
   {
     Header: 'Name',
     accessor: 'name',
+    filter: 'text',
+  },
+
+  {
+    Header: 'AUM [ETH]',
+    accessor: 'eth',
+    sortType: (rowA, rowB, columnId) => {
+      const a = new BigNumber(rowA.values[columnId]);
+      const b = new BigNumber(rowB.values[columnId]);
+      return b.comparedTo(a);
+    },
+    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
   },
   {
-    Header: 'Inception',
-    accessor: 'inception',
-    sortType: 'datetime',
-    Cell: (cell) => <FormattedDate timestamp={cell.value} format="yyyy/MM/dd" />,
+    Header: 'AUM [USD]',
+    accessor: 'usd',
+    sortType: (rowA, rowB, columnId) => {
+      const a = new BigNumber(rowA.values[columnId]);
+      const b = new BigNumber(rowB.values[columnId]);
+      return b.comparedTo(a);
+    },
+    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
   },
   {
-    Header: 'Portfolio',
+    Header: 'Since inception',
+    accessor: 'returnSinceInception',
+    sortType: (rowA, rowB, columnId) => {
+      const a = new BigNumber(rowA.values[columnId]);
+      const b = new BigNumber(rowB.values[columnId]);
+      return b.comparedTo(a);
+    },
+    Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
+  },
+  {
+    Header: 'Since yesterday',
+    accessor: 'returnSinceYesterday',
+    sortType: (rowA, rowB, columnId) => {
+      const a = new BigNumber(rowA.values[columnId]);
+      const b = new BigNumber(rowB.values[columnId]);
+      return b.comparedTo(a);
+    },
+    Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
+  },
+  {
+    Header: 'Top assets',
     accessor: 'holdings',
     disableSortBy: true,
-    Cell: (cell) => (
-      <ul>
-        {cell.value.map((item) => (
-          <li key={item.token.symbol}>
-            <TokenValueDisplay value={item} />
-          </li>
-        ))}
-      </ul>
-    ),
-  },
-  {
-    id: 'aum',
-    Header: 'AUM',
-    sortType: (a, b) => b.original.eth.comparedTo(a.original.eth),
-    Cell: (cell: Cell<RowData>) => <FormattedNumber value={cell.row.original.eth} suffix="ETH" decimals={0} />,
-  },
-  // {
-  //   Header: 'AUM [ETH]',
-  //   accessor: 'eth',
-  //   sortType: (rowA, rowB, columnId) => {
-  //     const a = rowA.values[columnId] as BigNumber;
-  //     const b = rowB.values[columnId] as BigNumber;
-  //     return b.comparedTo(a);
-  //   },
-  //   Cell: (cell) => <FormattedNumber value={cell.value} suffix="ETH" />,
-  // },
-  {
-    Header: 'Protocol',
-    accessor: 'version',
-  },
-  {
-    Header: 'Status',
-    accessor: 'active',
-    sortType: 'basic',
-    Cell: (cell) => (cell.value ? 'Active' : 'Inactive'),
+    Cell: (cell) =>
+      !new BigNumber(cell.row.original.eth).isZero() ? (
+        <ul>
+          {cell.value.map(
+            (item) =>
+              !new BigNumber(item.value || 0).isZero() && (
+                <li key={item.token.symbol}>
+                  {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
+                </li>
+              )
+          )}
+        </ul>
+      ) : (
+        <></>
+      ),
   },
 ];
 
@@ -78,6 +104,7 @@ function useTableDate() {
   const result = useFundOverviewQuery();
   const rates = useRatesOrThrow();
   const environment = useEnvironment()!;
+
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
     return funds.map<RowData>((item) => {
@@ -87,30 +114,24 @@ function useTableDate() {
         return new TokenValue(token, quantity);
       });
 
-      const eth = holdings.reduce<BigNumber>((carry, current) => {
-        const rate = rates[current.token.symbol]?.ETH ?? 0;
-        return carry.plus(current.value!.multipliedBy(rate));
-      }, new BigNumber(0));
+      const eth = item.gav;
+      const usd = new BigNumber(item.gav).multipliedBy(rates.ETH.USD);
 
-      const usd = holdings.reduce<BigNumber>((carry, current) => {
-        const rate = rates[current.token.symbol]?.USD ?? 0;
-        return carry.plus(current.value!.multipliedBy(rate));
-      }, new BigNumber(0));
+      const returnSinceInception = calculateChangeFromSharePrice(item.sharePrice, new BigNumber('1e18'));
 
-      const btc = holdings.reduce<BigNumber>((carry, current) => {
-        const rate = rates[current.token.symbol]?.BTC ?? 0;
-        return carry.plus(current.value!.multipliedBy(rate));
-      }, new BigNumber(0));
+      const returnSinceYesterday = calculateChangeFromSharePrice(
+        item.calculationsHistory[0]?.sharePrice,
+        item.calculationsHistory[1]?.sharePrice
+      );
 
       return {
         name: item.name,
         inception: new Date(item.createdAt * 1000),
-        version: item.version.name,
-        active: !item.isShutdown,
+        returnSinceInception,
+        returnSinceYesterday,
         holdings,
         eth,
         usd,
-        btc,
       };
     });
   }, [result.data]);
@@ -130,7 +151,7 @@ export const FundOverview: React.FC = () => {
     [data]
   );
 
-  const table = useTable(options, useGlobalFilter, useSortBy, usePagination);
+  const table = useTable(options, useGlobalFilter, useSortBy, usePagination, useRowState);
 
   return <CommonTable table={table} />;
 };

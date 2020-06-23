@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  Column,
-  useTable,
-  useSortBy,
-  usePagination,
-  useGlobalFilter,
-  TableOptions,
-  Row,
-  Cell,
-  useRowState,
-} from 'react-table';
+import { Column, useTable, useSortBy, usePagination, useGlobalFilter, TableOptions, useRowState } from 'react-table';
 import { useFundOverviewQuery } from './FundOverview.query';
-import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { CommonTable } from '~/components/Common/Table/Table';
 import { TokenValue } from '~/TokenValue';
 import { useEnvironment } from '~/hooks/useEnvironment';
@@ -20,8 +9,12 @@ import BigNumber from 'bignumber.js';
 import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 
 type RowData = {
+  address: string;
   name: string;
   inception: Date;
   returnSinceInception: BigNumber;
@@ -56,7 +49,7 @@ const columns: Column<RowData>[] = [
       const b = new BigNumber(rowB.values[columnId]);
       return b.comparedTo(a);
     },
-    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
+    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} digits={0} />,
   },
   {
     Header: 'Since inception',
@@ -79,23 +72,28 @@ const columns: Column<RowData>[] = [
     Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
   },
   {
-    Header: 'Top assets',
+    Header: 'Top 2 assets',
     accessor: 'holdings',
     disableSortBy: true,
     Cell: (cell) =>
       !new BigNumber(cell.row.original.eth).isZero() ? (
         <ul>
-          {cell.value.map(
-            (item) =>
-              !new BigNumber(item.value || 0).isZero() && (
-                <li key={item.token.symbol}>
-                  {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
-                </li>
-              )
+          {cell.value.map((item) =>
+            !new BigNumber(item.value || 0).isZero() ? (
+              <li key={item.token.symbol}>
+                {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
+              </li>
+            ) : (
+              <li>-</li>
+            )
           )}
+          {cell.value.length === 1 && <li>-</li>}
         </ul>
       ) : (
-        <></>
+        <ul>
+          <li>-</li>
+          <li>-</li>
+        </ul>
       ),
   },
 ];
@@ -125,6 +123,7 @@ function useTableDate() {
       );
 
       return {
+        address: item.id,
         name: item.name,
         inception: new Date(item.createdAt * 1000),
         returnSinceInception,
@@ -145,7 +144,7 @@ export const FundOverview: React.FC = () => {
     () => ({
       columns,
       data,
-      pageCount: Math.ceil(data.length % 20),
+      pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,
     }),
     [data]
@@ -153,5 +152,19 @@ export const FundOverview: React.FC = () => {
 
   const table = useTable(options, useGlobalFilter, useSortBy, usePagination, useRowState);
 
-  return <CommonTable table={table} />;
+  if (data.length === 0) {
+    return (
+      <Block>
+        <SectionTitle> Melon Fund Universe</SectionTitle>
+        <Spinner />
+      </Block>
+    );
+  }
+
+  return (
+    <Block>
+      <SectionTitle> Melon Fund Universe</SectionTitle>
+      <CommonTable table={table} />
+    </Block>
+  );
 };

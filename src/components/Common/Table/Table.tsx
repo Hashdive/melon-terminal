@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
+import { useHistory } from 'react-router';
+import { getNetworkName } from '~/config';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -54,6 +56,18 @@ export const HeaderRow = styled.tr`
   border-bottom: 1px solid ${(props) => props.theme.mainColors.textColor};
 `;
 
+export const TableTools = styled.div`
+  width: 100%;
+`;
+
+export const TableToolsFilter = styled.div`
+  float: left;
+`;
+
+export const TableToolsPagination = styled.div`
+  float: right;
+`;
+
 export interface BodyCellProps {
   maxWidth?: string;
 }
@@ -95,6 +109,12 @@ export const BodyRow = styled.tr<BodyRowProps>`
       `;
     }
   }}
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.mainColors.secondary};
+  }
 `;
 
 export const NoEntries = styled.div``;
@@ -115,13 +135,14 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
   const hasPagination = props.table.plugins.includes(usePagination);
   const hasSortBy = props.table.plugins.includes(useSortBy);
   const hasGlobalFilter = props.table.plugins.includes(useGlobalFilter);
+  const history = useHistory();
 
   const header = props.table.headerGroups.map((headerGroup) => (
     <HeaderRow {...headerGroup.getHeaderGroupProps()}>
       {headerGroup.headers.map((column) => (
         <HeaderCell {...column.getHeaderProps(hasSortBy ? column.getSortByToggleProps() : undefined)}>
           {column.render('Header')}
-          {hasSortBy ? <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span> : null}
+          {hasSortBy ? <span>{column.isSorted ? (column.isSortedDesc ? '↓' : '↑') : ''}</span> : null}
         </HeaderCell>
       ))}
     </HeaderRow>
@@ -132,10 +153,10 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
     props.table.prepareRow(row);
 
     return (
-      <BodyRow {...row.getRowProps()}>
-        {row.cells.map((cell) => (
-          <BodyCell {...cell.getCellProps()}>{cell.render('Cell')}</BodyCell>
-        ))}
+      <BodyRow {...row.getRowProps()} onClick={() => history.push(`/mainnet/fund/${row.original.address}`)}>
+        {row.cells.map((cell) => {
+          return <BodyCell {...cell.getCellProps()}>{cell.render('Cell')}</BodyCell>;
+        })}
       </BodyRow>
     );
   });
@@ -145,8 +166,10 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
 
   return (
     <>
-      {filter} {pagination}
-      <br />
+      <TableTools>
+        <TableToolsFilter>{filter}</TableToolsFilter>
+        <TableToolsPagination>{pagination}</TableToolsPagination>
+      </TableTools>
       <Table {...props.table.getTableProps()}>
         <TableHeader>{header}</TableHeader>
         <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>

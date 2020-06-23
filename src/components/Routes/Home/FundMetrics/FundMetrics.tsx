@@ -2,11 +2,31 @@ import React from 'react';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { useTokenRates } from '~/components/Contexts/Rates/Rates';
 import { useFundMetricsQuery } from '~/components/Routes/Home/FundMetrics/FundMetrics.query';
-import { Dictionary, DictionaryData, DictionaryEntry, DictionaryLabel } from '~/storybook/Dictionary/Dictionary';
 import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { Spinner } from '~/storybook/Spinner/Spinner';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
+import { Block } from '~/storybook/Block/Block';
+
+import styled, { css } from 'styled-components';
+
+export const MetricsBlock = styled.div`
+  width: 100%;
+  text-align: center;
+`;
+
+export const MetricsUsd = styled.div`
+  width: 100%;
+  text-align: 'center';
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSizes.xxxl};
+`;
+
+export const MetricsOthers = styled.div`
+  width: 100%;
+  text-align: 'center';
+  font-weight: ${(props) => props.theme.fontWeights.regular};
+`;
 
 export const FundMetrics: React.FC = () => {
   const [metrics, metricsQuery] = useFundMetricsQuery();
@@ -14,10 +34,10 @@ export const FundMetrics: React.FC = () => {
 
   if (metricsQuery.loading || !metrics) {
     return (
-      <Dictionary>
+      <Block>
         <SectionTitle>Network Metrics</SectionTitle>
         <Spinner />
-      </Dictionary>
+      </Block>
     );
   }
 
@@ -30,43 +50,23 @@ export const FundMetrics: React.FC = () => {
   const mlnPrice = networkGav.multipliedBy(rates.USD);
 
   return (
-    <Dictionary>
-      <SectionTitle>Network Metrics</SectionTitle>
+    <>
       <Grid>
-        <GridRow justify="space-around">
-          <GridCol xs={12} sm={4}>
-            {activeFunds && nonActiveFunds && (
-              <DictionaryEntry>
-                <DictionaryLabel>Number of funds</DictionaryLabel>
-                <DictionaryData textAlign="right">
-                  {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)}
-                </DictionaryData>
-              </DictionaryEntry>
-            )}
-
-            {allInvestments && (
-              <DictionaryEntry>
-                <DictionaryLabel>Number of investments</DictionaryLabel>
-                <DictionaryData textAlign="right">{parseInt(allInvestments ?? '0', 10)}</DictionaryData>
-              </DictionaryEntry>
-            )}
-          </GridCol>
-          <GridCol xs={12} sm={5}>
-            <DictionaryEntry>
-              <DictionaryLabel>Total AUM (in ETH)</DictionaryLabel>
-              <DictionaryData textAlign="right">
-                <FormattedNumber tooltip={true} decimals={0} value={networkGav} suffix="ETH" />
-              </DictionaryData>
-            </DictionaryEntry>
-            <DictionaryEntry>
-              <DictionaryLabel>Total AUM (in USD)</DictionaryLabel>
-              <DictionaryData textAlign="right">
+        <GridRow justify="center">
+          <GridCol xs={12} sm={12}>
+            <MetricsBlock>
+              Assets Managed by Melon Funds
+              <MetricsUsd>
                 <FormattedNumber value={mlnPrice} decimals={0} suffix="USD" />
-              </DictionaryData>
-            </DictionaryEntry>
+              </MetricsUsd>
+              <MetricsOthers>
+                {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds{' / '}
+                {parseInt(allInvestments ?? '0', 10)} investments
+              </MetricsOthers>
+            </MetricsBlock>
           </GridCol>
         </GridRow>
       </Grid>
-    </Dictionary>
+    </>
   );
 };

@@ -217,7 +217,7 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
       <BlockSection>
         <Tooltip
           placement="auto"
-          value="The rates you will charge to manage your fund, and the frequency at which you'll charge them."
+          value="The rates you will charge to manage your fund, and the frequency at which you will charge them."
         >
           <SectionTitle>Fees</SectionTitle>
         </Tooltip>

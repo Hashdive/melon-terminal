@@ -33,12 +33,7 @@ export const FundMetrics: React.FC = () => {
   const rates = useTokenRates('ETH');
 
   if (metricsQuery.loading || !metrics) {
-    return (
-      <Block>
-        <SectionTitle>Network Metrics</SectionTitle>
-        <Spinner />
-      </Block>
-    );
+    return <></>;
   }
 
   const networkGav = fromTokenBaseUnit(metrics.state?.networkGav, 18);

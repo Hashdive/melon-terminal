@@ -55,7 +55,7 @@ export const FundMetrics: React.FC = () => {
         <GridRow justify="center">
           <GridCol xs={12} sm={12}>
             <MetricsBlock>
-              Assets Managed by Melon Funds
+              Assets Managed with Melon Protocol
               <MetricsUsd>
                 <FormattedNumber value={mlnPrice} decimals={0} suffix="USD" />
               </MetricsUsd>

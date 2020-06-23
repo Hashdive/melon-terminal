@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components';
 import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
 import { useHistory } from 'react-router';
 import { getNetworkName } from '~/config';
+import { Button } from '~/components/Form/Button/Button';
+import { Input } from '~/components/Form/Input/Input';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -58,6 +60,8 @@ export const HeaderRow = styled.tr`
 
 export const TableTools = styled.div`
   width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
 export const TableToolsFilter = styled.div`
@@ -174,7 +178,9 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
         <TableHeader>{header}</TableHeader>
         <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>
       </Table>
-      {pagination}
+      <TableTools>
+        <TableToolsPagination>{pagination}</TableToolsPagination>
+      </TableTools>
     </>
   );
 }
@@ -184,18 +190,22 @@ export interface TablePaginationProps<TData extends object = any> extends Common
 export function TablePagination<TData extends object>(props: TablePaginationProps<TData>) {
   return (
     <div>
-      <button onClick={() => props.table.gotoPage(0)} disabled={!props.table.canPreviousPage}>
+      <Button onClick={() => props.table.gotoPage(0)} disabled={!props.table.canPreviousPage} size="extrasmall">
         {'<<'}
-      </button>{' '}
-      <button onClick={() => props.table.previousPage()} disabled={!props.table.canPreviousPage}>
+      </Button>{' '}
+      <Button onClick={() => props.table.previousPage()} disabled={!props.table.canPreviousPage} size="extrasmall">
         {'<'}
-      </button>{' '}
-      <button onClick={() => props.table.nextPage()} disabled={!props.table.canNextPage}>
+      </Button>{' '}
+      <Button onClick={() => props.table.nextPage()} disabled={!props.table.canNextPage} size="extrasmall">
         {'>'}
-      </button>{' '}
-      <button onClick={() => props.table.gotoPage(props.table.pageCount - 1)} disabled={!props.table.canNextPage}>
+      </Button>{' '}
+      <Button
+        onClick={() => props.table.gotoPage(props.table.pageCount - 1)}
+        disabled={!props.table.canNextPage}
+        size="extrasmall"
+      >
         {'>>'}
-      </button>{' '}
+      </Button>{' '}
       <span>
         Page{' '}
         <strong>
@@ -219,6 +229,7 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
     <span>
       Search:{' '}
       <input
+        name="search"
         value={value || ''}
         onChange={(e) => {
           setValue(e.target.value);

@@ -22,6 +22,7 @@ import { Link } from '~/storybook/Link/Link';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { getNetworkName } from '~/config';
 import { AccountContextValue } from '~/components/Contexts/Account/Account';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 
 export interface WalletFundSetupForm {
   name: string;
@@ -204,24 +205,45 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
   return (
     <Form formik={formik}>
       <BlockSection>
-        <SectionTitle>Fund</SectionTitle>
+        <Tooltip placement="auto" value="The public-facing name of your fund.">
+          <SectionTitle>Fund</SectionTitle>
+        </Tooltip>
+        <NotificationBar kind="neutral">
+          <NotificationContent>The fund name you choose now cannot be changed later.</NotificationContent>
+        </NotificationBar>
+
         <Input name="name" label="Name" />
       </BlockSection>
       <BlockSection>
-        <SectionTitle>Fees</SectionTitle>
+        <Tooltip
+          placement="auto"
+          value="The rates you will charge to manage your fund, and the frequency at which you'll charge them."
+        >
+          <SectionTitle>Fees</SectionTitle>
+        </Tooltip>
+        <NotificationBar kind="neutral">
+          <NotificationContent>The fees you choose now cannot be changed later.</NotificationContent>
+        </NotificationBar>
         <Input name="managementFee" label="Management Fee (%)" type="number" step="any" />
         <Input name="performanceFee" label="Performance Fee (%)" type="number" step="any" />
         <Input name="performanceFeePeriod" label="Performance Fee Period (days)" type="number" step="any" />
       </BlockSection>
       <BlockSection>
-        <SectionTitle>Supported Exchanges</SectionTitle>
+        <Tooltip placement="auto" value="The decentralized exchanges upon which your fund will be able to trade.">
+          <SectionTitle>Supported Exchanges</SectionTitle>
+        </Tooltip>
         <NotificationBar kind="neutral">
           <NotificationContent>Exchanges can be set up now and you can add more exchanges later.</NotificationContent>
         </NotificationBar>
         <CheckboxGroup name="exchanges" options={exchangeOptions} />
       </BlockSection>
       <BlockSection>
-        <SectionTitle>Allowed Investment Assets</SectionTitle>
+        <Tooltip
+          placement="auto"
+          value="The tokens you will accept from investors in exchange for shares of your fund."
+        >
+          <SectionTitle>Allowed Investment Assets</SectionTitle>
+        </Tooltip>
         <NotificationBar kind="neutral">
           <NotificationContent>Investment assets can be set up now and they can be changed later.</NotificationContent>
         </NotificationBar>

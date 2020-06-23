@@ -44,7 +44,10 @@ export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationPr
       <NotificationBar kind="neutral">
         <NotificationContent>
           The price tolerance policy provides a pre-trade price check ensuring that you do not trade at a price that is
-          disadvantageous to the fund. It is expressed as a percentage and references the last on-chain price update.
+          disadvantageous to the fund. It is expressed as a percentage and references the difference between a token's
+          current price and its price as of the last on-chain price update. Note that while you can edit your price
+          tolerance policy to make it more conservative, you cannot go the other direction. In other words, if you first
+          implement a 7% cap, you could later change it to 5% but not 10%.
         </NotificationContent>
       </NotificationBar>
       <Form formik={formik}>

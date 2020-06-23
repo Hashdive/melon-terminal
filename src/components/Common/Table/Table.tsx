@@ -1,10 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
-import { useHistory } from 'react-router';
-import { getNetworkName } from '~/config';
 import { Button } from '~/components/Form/Button/Button';
-import { Input } from '~/components/Form/Input/Input';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -42,15 +39,8 @@ export interface HeaderCellProps {
 }
 
 export const HeaderCell = styled.th<HeaderCellProps>`
-  text-align: left;
   padding: ${(props) => props.theme.spaceUnits.s};
   cursor: ${(props) => props.hover && 'pointer'};
-`;
-
-export const HeaderCellRightAlign = styled.th<HeaderCellProps>`
-  cursor: ${(props) => props.hover && 'pointer'};
-  text-align: right;
-  padding: ${(props) => props.theme.spaceUnits.s};
 `;
 
 export const HeaderRow = styled.tr`
@@ -72,6 +62,25 @@ export const TableToolsPagination = styled.div`
   float: right;
 `;
 
+export const SearchInput = styled.input`
+  position: relative;
+  padding: 0px ${(props) => props.theme.spaceUnits.m};
+  border: 1px solid ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  border-radius: 0;
+  background: ${(props) => props.theme.mainColors.primary};
+  height: ${(props) => props.theme.spaceUnits.xxl};
+  box-shadow: inset 1px 4px 4px rgba(200, 200, 200, 0.25);
+  color: ${(props) => props.theme.mainColors.textColor};
+
+  &::placeholder {
+    color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  }
+
+  &:focus {
+    outline-color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  }
+`;
+
 export interface BodyCellProps {
   maxWidth?: string;
 }
@@ -87,11 +96,6 @@ export const BodyCell = styled.td<BodyCellProps>`
   `}
   
   padding: ${(props) => props.theme.spaceUnits.s};
-`;
-
-export const BodyCellRightAlign = styled.td`
-  padding: ${(props) => props.theme.spaceUnits.s};
-  text-align: right;
 `;
 
 export interface BodyRowProps {
@@ -139,27 +143,36 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
   const hasPagination = props.table.plugins.includes(usePagination);
   const hasSortBy = props.table.plugins.includes(useSortBy);
   const hasGlobalFilter = props.table.plugins.includes(useGlobalFilter);
-  const history = useHistory();
 
-  const header = props.table.headerGroups.map((headerGroup) => (
-    <HeaderRow {...headerGroup.getHeaderGroupProps()}>
-      {headerGroup.headers.map((column) => (
-        <HeaderCell {...column.getHeaderProps(hasSortBy ? column.getSortByToggleProps() : undefined)}>
+  const header = props.table.headerGroups.map((headerGroup) => {
+    const cells = headerGroup.headers.map((column) => {
+      const propGetter = {
+        ...(hasSortBy && column.getSortByToggleProps()),
+        ...column.headerProps,
+      };
+
+      const isSorted = hasSortBy && column.isSorted;
+      const sortByIndicator = isSorted ? <span>{column.isSortedDesc ? '↓' : '↑'}</span> : null;
+
+      return (
+        <HeaderCell {...column.getHeaderProps(propGetter)} hover={!column.disableSortBy}>
           {column.render('Header')}
-          {hasSortBy ? <span>{column.isSorted ? (column.isSortedDesc ? '↓' : '↑') : ''}</span> : null}
+          {sortByIndicator}
         </HeaderCell>
-      ))}
-    </HeaderRow>
-  ));
+      );
+    });
+
+    return <HeaderRow {...headerGroup.getHeaderGroupProps()}>{cells}</HeaderRow>;
+  });
 
   const rows = hasPagination ? props.table.page : props.table.rows;
   const body = rows.map((row) => {
     props.table.prepareRow(row);
 
     return (
-      <BodyRow {...row.getRowProps()} onClick={() => history.push(`/mainnet/fund/${row.original.address}`)}>
+      <BodyRow {...row.getRowProps(props.table.rowProps?.(row))}>
         {row.cells.map((cell) => {
-          return <BodyCell {...cell.getCellProps()}>{cell.render('Cell')}</BodyCell>;
+          return <BodyCell {...cell.getCellProps(cell.column.cellProps)}>{cell.render('Cell')}</BodyCell>;
         })}
       </BodyRow>
     );
@@ -190,28 +203,44 @@ export interface TablePaginationProps<TData extends object = any> extends Common
 export function TablePagination<TData extends object>(props: TablePaginationProps<TData>) {
   return (
     <div>
-      <Button onClick={() => props.table.gotoPage(0)} disabled={!props.table.canPreviousPage} size="extrasmall">
+      <Button
+        onClick={() => props.table.gotoPage(0)}
+        disabled={!props.table.canPreviousPage}
+        size="extrasmall"
+        kind="secondary"
+      >
         {'<<'}
       </Button>{' '}
-      <Button onClick={() => props.table.previousPage()} disabled={!props.table.canPreviousPage} size="extrasmall">
+      <Button
+        onClick={() => props.table.previousPage()}
+        disabled={!props.table.canPreviousPage}
+        size="extrasmall"
+        kind="secondary"
+      >
         {'<'}
       </Button>{' '}
-      <Button onClick={() => props.table.nextPage()} disabled={!props.table.canNextPage} size="extrasmall">
+      <Button
+        onClick={() => props.table.nextPage()}
+        disabled={!props.table.canNextPage}
+        size="extrasmall"
+        kind="secondary"
+      >
         {'>'}
       </Button>{' '}
       <Button
         onClick={() => props.table.gotoPage(props.table.pageCount - 1)}
         disabled={!props.table.canNextPage}
         size="extrasmall"
+        kind="secondary"
       >
         {'>>'}
       </Button>{' '}
-      <span>
+      {/* <span>
         Page{' '}
         <strong>
           {props.table.state.pageIndex + 1} of {props.table.pageOptions.length}
         </strong>{' '}
-      </span>
+      </span> */}
     </div>
   );
 }
@@ -228,18 +257,14 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
   return (
     <span>
       Search:{' '}
-      <input
+      <SearchInput
         name="search"
         value={value || ''}
         onChange={(e) => {
           setValue(e.target.value);
           onChange(e.target.value);
         }}
-        placeholder={`${count} records...`}
-        style={{
-          fontSize: '1.1rem',
-          border: '0',
-        }}
+        // placeholder={`${count} records...`}
       />
     </span>
   );

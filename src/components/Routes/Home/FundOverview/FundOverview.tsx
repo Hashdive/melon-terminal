@@ -1,17 +1,26 @@
-import React from 'react';
-import { Column, useTable, useSortBy, usePagination, useGlobalFilter, TableOptions, useRowState } from 'react-table';
-import { useFundOverviewQuery } from './FundOverview.query';
-import { CommonTable } from '~/components/Common/Table/Table';
-import { TokenValue } from '~/TokenValue';
-import { useEnvironment } from '~/hooks/useEnvironment';
-import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import BigNumber from 'bignumber.js';
-import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
+import React from 'react';
+import { useHistory } from 'react-router';
+import { Column, TableOptions, useGlobalFilter, usePagination, useRowState, useSortBy, useTable } from 'react-table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
+import { CommonTable } from '~/components/Common/Table/Table';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
+import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
+import { Button } from '~/components/Form/Button/Button';
+import { useEnvironment } from '~/hooks/useEnvironment';
 import { Block } from '~/storybook/Block/Block';
-import { SectionTitle } from '~/storybook/Title/Title';
 import { Spinner } from '~/storybook/Spinner/Spinner';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { TokenValue } from '~/TokenValue';
+import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
+import { useFundOverviewQuery } from './FundOverview.query';
+import { getNetworkName } from '~/config';
+import { useConnectionState } from '~/hooks/useConnectionState';
+import { Chip } from '~/components/Common/Chip/Chip';
+import { useVersionQuery } from '~/components/Layout/Version.query';
+import { TiLockClosedOutline } from 'react-icons/ti';
+import { IoIosCloseCircleOutline } from 'react-icons/io';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 
 type RowData = {
   address: string;
@@ -22,81 +31,177 @@ type RowData = {
   holdings: TokenValue[];
   eth: BigNumber;
   usd: BigNumber;
+  isShutdown: boolean;
+  version: string;
 };
 
-const columns: Column<RowData>[] = [
-  {
-    Header: 'Name',
-    accessor: 'name',
-    filter: 'text',
-  },
-
-  {
-    Header: 'AUM [ETH]',
-    accessor: 'eth',
-    sortType: (rowA, rowB, columnId) => {
-      const a = new BigNumber(rowA.values[columnId]);
-      const b = new BigNumber(rowB.values[columnId]);
-      return b.comparedTo(a);
-    },
-    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
-  },
-  {
-    Header: 'AUM [USD]',
-    accessor: 'usd',
-    sortType: (rowA, rowB, columnId) => {
-      const a = new BigNumber(rowA.values[columnId]);
-      const b = new BigNumber(rowB.values[columnId]);
-      return b.comparedTo(a);
-    },
-    Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} digits={0} />,
-  },
-  {
-    Header: 'Since inception',
-    accessor: 'returnSinceInception',
-    sortType: (rowA, rowB, columnId) => {
-      const a = new BigNumber(rowA.values[columnId]);
-      const b = new BigNumber(rowB.values[columnId]);
-      return b.comparedTo(a);
-    },
-    Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
-  },
-  {
-    Header: 'Since yesterday',
-    accessor: 'returnSinceYesterday',
-    sortType: (rowA, rowB, columnId) => {
-      const a = new BigNumber(rowA.values[columnId]);
-      const b = new BigNumber(rowB.values[columnId]);
-      return b.comparedTo(a);
-    },
-    Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
-  },
-  {
-    Header: 'Top 2 assets',
-    accessor: 'holdings',
-    disableSortBy: true,
-    Cell: (cell) =>
-      !new BigNumber(cell.row.original.eth).isZero() ? (
-        <ul>
-          {cell.value.map((item) =>
-            !new BigNumber(item.value || 0).isZero() ? (
-              <li key={item.token.symbol}>
-                {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
-              </li>
-            ) : (
-              <li>-</li>
-            )
+const columns = (version: string): Column<RowData>[] => {
+  return [
+    {
+      Header: 'Name',
+      accessor: 'name',
+      filter: 'text',
+      headerProps: {
+        style: {
+          textAlign: 'left',
+        },
+      },
+      Cell: (cell) => (
+        <span>
+          {cell.value}
+          <br />
+          {cell.row.original.isShutdown && (
+            <Tooltip value="Fund has been shut down">
+              <TiLockClosedOutline color="red" />
+            </Tooltip>
           )}
-          {cell.value.length === 1 && <li>-</li>}
-        </ul>
-      ) : (
-        <ul>
-          <li>-</li>
-          <li>-</li>
-        </ul>
+          {cell.row.original.version !== version && (
+            <Tooltip value="Fund running on deprecated protocol version">
+              <IoIosCloseCircleOutline color="red" />
+            </Tooltip>
+          )}
+        </span>
       ),
-  },
-];
+    },
+
+    {
+      Header: 'AUM [ETH]',
+      accessor: 'eth',
+      sortType: (rowA, rowB, columnId) => {
+        const a = new BigNumber(rowA.values[columnId]);
+        const b = new BigNumber(rowB.values[columnId]);
+        return b.comparedTo(a);
+      },
+      Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
+      cellProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+    {
+      Header: 'AUM [USD]',
+      accessor: 'usd',
+      sortType: (rowA, rowB, columnId) => {
+        const a = new BigNumber(rowA.values[columnId]);
+        const b = new BigNumber(rowB.values[columnId]);
+        return b.comparedTo(a);
+      },
+      Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} digits={0} />,
+      cellProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+    {
+      Header: 'Since inception',
+      accessor: 'returnSinceInception',
+      sortType: (rowA, rowB, columnId) => {
+        const a = new BigNumber(rowA.values[columnId]);
+        const b = new BigNumber(rowB.values[columnId]);
+        return b.comparedTo(a);
+      },
+      Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
+      cellProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+    {
+      Header: 'Since yesterday',
+      accessor: 'returnSinceYesterday',
+      sortType: (rowA, rowB, columnId) => {
+        const a = new BigNumber(rowA.values[columnId]);
+        const b = new BigNumber(rowB.values[columnId]);
+        return b.comparedTo(a);
+      },
+      Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
+      cellProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+    {
+      Header: 'Top assets',
+      accessor: 'holdings',
+      disableSortBy: true,
+      Cell: (cell) =>
+        !new BigNumber(cell.row.original.eth).isZero() ? (
+          <ul>
+            {cell.value.map((item) =>
+              !new BigNumber(item.value || 0).isZero() ? (
+                <li key={item.token.symbol}>
+                  {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
+                </li>
+              ) : (
+                <li>-</li>
+              )
+            )}
+            {cell.value.length === 1 && <li>-</li>}
+          </ul>
+        ) : (
+          <ul>
+            <li>-</li>
+            <li>-</li>
+          </ul>
+        ),
+      cellProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+    {
+      Header: 'Invest',
+      accessor: 'address',
+      disableSortBy: true,
+      Cell: (cell) => (
+        <Button kind="secondary" size="small">
+          Invest
+        </Button>
+      ),
+      cellProps: {
+        style: {
+          textAlign: 'left',
+          verticalAlign: 'middle',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'left',
+        },
+      },
+    },
+  ];
+};
 
 function useTableDate() {
   const result = useFundOverviewQuery();
@@ -131,6 +236,8 @@ function useTableDate() {
         holdings,
         eth,
         usd,
+        isShutdown: item.isShutdown,
+        version: item.version.name,
       };
     });
   }, [result.data]);
@@ -140,14 +247,21 @@ function useTableDate() {
 
 export const FundOverview: React.FC = () => {
   const data = useTableDate();
+  const history = useHistory();
+  const connection = useConnectionState();
+  const [version] = useVersionQuery();
+
+  const prefix = getNetworkName(connection.network);
+
   const options: TableOptions<RowData> = React.useMemo(
     () => ({
-      columns,
+      columns: columns(version?.name),
       data,
       pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,
+      rowProps: (row) => ({ onClick: () => history.push(`/${prefix}/fund/${row.original.address}`) }),
     }),
-    [data]
+    [data, history]
   );
 
   const table = useTable(options, useGlobalFilter, useSortBy, usePagination, useRowState);

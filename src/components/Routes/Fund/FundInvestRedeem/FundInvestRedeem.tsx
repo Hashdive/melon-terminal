@@ -12,7 +12,10 @@ export interface FundInvestProps {
 export const FundInvestRedeem: React.FC<FundInvestProps> = ({ address }) => {
   return (
     <Grid>
-      <RequiresAccount fallback={false}>
+      <RequiresAccount
+        fallback={true}
+        outputText="You must be logged in with a connection provider to invest in a fund."
+      >
         <GridRow>
           <GridCol xs={12} sm={6}>
             <FundInvest address={address} />

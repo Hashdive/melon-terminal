@@ -116,10 +116,13 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
           )}
           {cell.row.original.isShutdown ||
             (cell.row.original.version !== version && (
-              <Tooltip value="Closed for investment">
-                <GiClosedDoors color="grey" />
-              </Tooltip>
-            ))}{' '}
+              <>
+                {' '}
+                <Tooltip value="Closed for investment">
+                  <GiClosedDoors color="grey" />
+                </Tooltip>
+              </>
+            ))}
         </span>
       ),
     },

@@ -17,7 +17,16 @@ import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { useVersionQuery } from '~/components/Layout/Version.query';
-import { GiCaesar, GiCoins, GiBrokenPottery, GiLaurels, GiClosedDoors, GiPegasus, GiPiggyBank } from 'react-icons/gi';
+import {
+  GiCaesar,
+  GiCoins,
+  GiBrokenPottery,
+  GiLaurels,
+  GiClosedDoors,
+  GiPegasus,
+  GiPiggyBank,
+  GiShamblingZombie,
+} from 'react-icons/gi';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
@@ -73,11 +82,19 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
               </Tooltip>
             </>
           )}
-          {new BigNumber(cell.row.original.eth).isLessThan('1e17') && (
+          {new BigNumber(cell.row.original.eth).isLessThan('1e17') && !new BigNumber(cell.row.original.eth).isZero() && (
             <>
               {' '}
               <Tooltip value="Tiny fund">
                 <GiPiggyBank color="FF6EC7" />
+              </Tooltip>
+            </>
+          )}
+          {new BigNumber(cell.row.original.eth).isZero() && (
+            <>
+              {' '}
+              <Tooltip value="Empty fund">
+                <GiShamblingZombie color="grey" />
               </Tooltip>
             </>
           )}

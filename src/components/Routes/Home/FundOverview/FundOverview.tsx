@@ -17,7 +17,7 @@ import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { useVersionQuery } from '~/components/Layout/Version.query';
-import { GiCaesar, GiCoins, GiBrokenPottery, GiLaurels, GiClosedDoors, GiAmphora } from 'react-icons/gi';
+import { GiCaesar, GiCoins, GiBrokenPottery, GiLaurels, GiClosedDoors, GiPegasus } from 'react-icons/gi';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
@@ -69,7 +69,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
             <>
               {' '}
               <Tooltip value="Fund with more than 50 ETH">
-                <GiCoins />
+                <GiCoins color="#C9B037" />
               </Tooltip>
             </>
           )}
@@ -85,14 +85,14 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
             <>
               {' '}
               <Tooltip value="Well-performing fund">
-                <GiAmphora color="green" />
+                <GiPegasus color="green" />
               </Tooltip>
             </>
           )}
           {cell.row.original.isShutdown ||
             (cell.row.original.version !== version && (
               <Tooltip value="Closed for investment">
-                <GiClosedDoors color="rgb(244,67,54)" />
+                <GiClosedDoors />
               </Tooltip>
             ))}{' '}
         </span>

@@ -22,6 +22,7 @@ import { sharesToken } from '~/utils/sharesToken';
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { Link } from '~/storybook/Link/Link';
 import { getNetworkName } from '~/config';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 
 export interface FundInvestProps {
   address: string;
@@ -197,7 +198,12 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
 
   return (
     <Block>
-      <SectionTitle>Invest</SectionTitle>
+      <Tooltip
+        placement="auto"
+        value="Fill out the form below to request an investment in this fund. Your request will be executed after the next price update, which usually occur in the morning UTC."
+      >
+        <SectionTitle>Invest</SectionTitle>
+      </Tooltip>
 
       <RequiresFundNotShutDown fallback="This fund is already shut down. You can only invest in active funds.">
         <RequiresFundCreatedAfter

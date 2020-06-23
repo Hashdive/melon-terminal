@@ -210,7 +210,7 @@ export function TablePagination<TData extends object>(props: TablePaginationProp
         kind="secondary"
       >
         {'<<'}
-      </Button>{' '}
+      </Button>
       <Button
         onClick={() => props.table.previousPage()}
         disabled={!props.table.canPreviousPage}
@@ -218,7 +218,7 @@ export function TablePagination<TData extends object>(props: TablePaginationProp
         kind="secondary"
       >
         {'<'}
-      </Button>{' '}
+      </Button>
       <Button
         onClick={() => props.table.nextPage()}
         disabled={!props.table.canNextPage}
@@ -226,7 +226,7 @@ export function TablePagination<TData extends object>(props: TablePaginationProp
         kind="secondary"
       >
         {'>'}
-      </Button>{' '}
+      </Button>
       <Button
         onClick={() => props.table.gotoPage(props.table.pageCount - 1)}
         disabled={!props.table.canNextPage}

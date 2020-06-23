@@ -17,7 +17,7 @@ import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { useVersionQuery } from '~/components/Layout/Version.query';
-import { FaLock, FaMedal, FaDollarSign } from 'react-icons/fa';
+import { GiCaesar, GiCoins, GiBrokenPottery, GiLaurels, GiClosedDoors, GiAmphora } from 'react-icons/gi';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
@@ -50,38 +50,51 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
         <span>
           {cell.value}
           <br />
-          {cell.row.original.rank === 1 && <FaMedal color="#C9B037" />}
-          {cell.row.original.rank === 2 && <FaMedal color="#B4B4B4" />}
-          {cell.row.original.rank === 3 && <FaMedal color="#AD8A56" />}
-          {cell.row.original.isShutdown ||
-            (cell.row.original.version !== version && (
-              <Tooltip value="This fund is closed for investment">
-                <FaLock color="rgb(244,67,54)" />
-              </Tooltip>
-            ))}{' '}
-          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e23') && (
+          {cell.row.original.rank === 1 && (
+            <Tooltip value="Largest fund on Melon">
+              <GiCaesar color="#C9B037" />
+            </Tooltip>
+          )}
+          {cell.row.original.rank === 2 && (
+            <Tooltip value="2nd largest fund on Melon">
+              <GiLaurels color="#B4B4B4" />
+            </Tooltip>
+          )}
+          {cell.row.original.rank === 3 && (
+            <Tooltip value="3rd largest fund on Melon">
+              <GiLaurels color="#AD8A56" />
+            </Tooltip>
+          )}
+          {new BigNumber(cell.row.original.eth).isGreaterThanOrEqualTo('5e19') && (
             <>
               {' '}
-              <FaDollarSign color="" />
-              <FaDollarSign />
-              <FaDollarSign />
+              <Tooltip value="Fund with more than 50 ETH">
+                <GiCoins />
+              </Tooltip>
             </>
           )}
-          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e22') &&
-            new BigNumber(cell.row.original.usd).isLessThan('1e23') && (
-              <>
-                {' '}
-                <FaDollarSign />
-                <FaDollarSign />
-              </>
-            )}
-          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e21') &&
-            new BigNumber(cell.row.original.usd).isLessThan('1e22') && (
-              <>
-                {' '}
-                <FaDollarSign />
-              </>
-            )}
+          {new BigNumber(cell.row.original.returnSinceInception).isLessThan(-20) && (
+            <>
+              {' '}
+              <Tooltip value="Bad performing fund">
+                <GiBrokenPottery color="red" />
+              </Tooltip>
+            </>
+          )}
+          {new BigNumber(cell.row.original.returnSinceInception).isGreaterThan(50) && (
+            <>
+              {' '}
+              <Tooltip value="Well-performing fund">
+                <GiAmphora color="green" />
+              </Tooltip>
+            </>
+          )}
+          {cell.row.original.isShutdown ||
+            (cell.row.original.version !== version && (
+              <Tooltip value="Closed for investment">
+                <GiClosedDoors color="rgb(244,67,54)" />
+              </Tooltip>
+            ))}{' '}
         </span>
       ),
     },
@@ -147,7 +160,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       },
     },
     {
-      Header: 'Since yesterday',
+      Header: '1 day',
       accessor: 'returnSinceYesterday',
       sortType: (rowA, rowB, columnId) => {
         const a = new BigNumber(rowA.values[columnId]);
@@ -216,13 +229,13 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       ),
       cellProps: {
         style: {
-          textAlign: 'left',
+          textAlign: 'right',
           verticalAlign: 'middle',
         },
       },
       headerProps: {
         style: {
-          textAlign: 'left',
+          textAlign: 'right',
         },
       },
     },
@@ -280,6 +293,17 @@ export const FundOverview: React.FC = () => {
 
   const prefix = getNetworkName(connection.network);
 
+  const leaderboardOptions: TableOptions<RowData> = React.useMemo(
+    () => ({
+      columns: columns(version?.name, prefix || '', history),
+      data,
+      pageCount: Math.ceil(data.length % 10),
+      defaultCanSort: true,
+      rowProps: (row) => ({ onClick: () => history.push(`/${prefix}/fund/${row.original.address}`) }),
+    }),
+    [data, history]
+  );
+
   const options: TableOptions<RowData> = React.useMemo(
     () => ({
       columns: columns(version?.name, prefix || '', history),
@@ -303,9 +327,18 @@ export const FundOverview: React.FC = () => {
   }
 
   return (
-    <Block>
-      <SectionTitle> Melon Fund Universe</SectionTitle>
-      <CommonTable table={table} />
-    </Block>
+    <>
+      <Block>
+        <SectionTitle>Melon Fund Leaderboard</SectionTitle>
+        <p>Best 1D performance</p>
+        <p>Best MTD performance</p>
+        <p>Best YTD performance</p>
+        <p>Largest fund</p>
+      </Block>
+      <Block>
+        <SectionTitle> Melon Fund Universe</SectionTitle>
+        <CommonTable table={table} />
+      </Block>
+    </>
   );
 };

@@ -6,9 +6,10 @@ import { Container } from '~/storybook/Container/Container';
 export interface RequiresAccountProps {
   loader?: React.ReactElement;
   fallback?: React.ReactNode;
+  outputText?: string;
 }
 
-export const RequiresAccount: React.FC<RequiresAccountProps> = ({ loader, children, fallback = true }) => {
+export const RequiresAccount: React.FC<RequiresAccountProps> = ({ loader, children, fallback = true, outputText }) => {
   const account = useAccount();
 
   if (account.loading) {
@@ -22,7 +23,7 @@ export const RequiresAccount: React.FC<RequiresAccountProps> = ({ loader, childr
   const output =
     fallback === true ? (
       <Container>
-        <Fallback>You have to be logged in to see this page.</Fallback>
+        <Fallback>{outputText ? outputText : 'You have to be logged in to see this page.'}</Fallback>
       </Container>
     ) : (
       fallback

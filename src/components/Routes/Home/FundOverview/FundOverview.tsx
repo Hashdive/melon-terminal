@@ -17,9 +17,7 @@ import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { useVersionQuery } from '~/components/Layout/Version.query';
-import { TiLockClosedOutline } from 'react-icons/ti';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { FaMedal } from 'react-icons/fa';
+import { FaLock, FaMedal, FaDollarSign } from 'react-icons/fa';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
@@ -50,19 +48,40 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       },
       Cell: (cell) => (
         <span>
+          {cell.value}
+          <br />
           {cell.row.original.rank === 1 && <FaMedal color="#C9B037" />}
           {cell.row.original.rank === 2 && <FaMedal color="#B4B4B4" />}
-          {cell.row.original.rank === 3 && <FaMedal color="#AD8A56" />} {cell.value}{' '}
-          {cell.row.original.isShutdown && (
-            <Tooltip value="Fund has been shut down">
-              <TiLockClosedOutline color="red" />
-            </Tooltip>
+          {cell.row.original.rank === 3 && <FaMedal color="#AD8A56" />}
+          {cell.row.original.isShutdown ||
+            (cell.row.original.version !== version && (
+              <Tooltip value="This fund is closed for investment">
+                <FaLock color="rgb(244,67,54)" />
+              </Tooltip>
+            ))}{' '}
+          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e23') && (
+            <>
+              {' '}
+              <FaDollarSign color="" />
+              <FaDollarSign />
+              <FaDollarSign />
+            </>
           )}
-          {cell.row.original.version !== version && (
-            <Tooltip value="Fund running on deprecated protocol version">
-              <IoIosCloseCircleOutline color="red" />
-            </Tooltip>
-          )}
+          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e22') &&
+            new BigNumber(cell.row.original.usd).isLessThan('1e23') && (
+              <>
+                {' '}
+                <FaDollarSign />
+                <FaDollarSign />
+              </>
+            )}
+          {new BigNumber(cell.row.original.usd).isGreaterThanOrEqualTo('1e21') &&
+            new BigNumber(cell.row.original.usd).isLessThan('1e22') && (
+              <>
+                {' '}
+                <FaDollarSign />
+              </>
+            )}
         </span>
       ),
     },

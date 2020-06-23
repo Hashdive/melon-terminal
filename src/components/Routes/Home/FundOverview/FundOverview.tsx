@@ -16,13 +16,15 @@ import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromShareP
 import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
-import { Chip } from '~/components/Common/Chip/Chip';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 import { TiLockClosedOutline } from 'react-icons/ti';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
+import { FaMedal } from 'react-icons/fa';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
 type RowData = {
+  rank: number;
   address: string;
   name: string;
   inception: Date;
@@ -35,7 +37,7 @@ type RowData = {
   version: string;
 };
 
-const columns = (version: string): Column<RowData>[] => {
+const columns = (version: string, prefix: string, history: any): Column<RowData>[] => {
   return [
     {
       Header: 'Name',
@@ -48,8 +50,9 @@ const columns = (version: string): Column<RowData>[] => {
       },
       Cell: (cell) => (
         <span>
-          {cell.value}
-          <br />
+          {cell.row.original.rank === 1 && <FaMedal color="#C9B037" />}
+          {cell.row.original.rank === 2 && <FaMedal color="#B4B4B4" />}
+          {cell.row.original.rank === 3 && <FaMedal color="#AD8A56" />} {cell.value}{' '}
           {cell.row.original.isShutdown && (
             <Tooltip value="Fund has been shut down">
               <TiLockClosedOutline color="red" />
@@ -92,7 +95,7 @@ const columns = (version: string): Column<RowData>[] => {
         const b = new BigNumber(rowB.values[columnId]);
         return b.comparedTo(a);
       },
-      Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} digits={0} />,
+      Cell: (cell) => <FormattedNumber value={fromTokenBaseUnit(cell.value, 18)} decimals={0} />,
       cellProps: {
         style: {
           textAlign: 'right',
@@ -184,7 +187,11 @@ const columns = (version: string): Column<RowData>[] => {
       accessor: 'address',
       disableSortBy: true,
       Cell: (cell) => (
-        <Button kind="secondary" size="small">
+        <Button
+          kind="secondary"
+          size="small"
+          onClick={() => history.push(`/${prefix}/fund/${cell.row.original.address}/invest`)}
+        >
           Invest
         </Button>
       ),
@@ -210,7 +217,7 @@ function useTableDate() {
 
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
-    return funds.map<RowData>((item) => {
+    return funds.map<RowData>((item, index) => {
       const holdings = item.holdings.map((item) => {
         const token = environment.getToken(item.asset.symbol);
         const quantity = item.assetGav;
@@ -228,6 +235,7 @@ function useTableDate() {
       );
 
       return {
+        rank: index + 1,
         address: item.id,
         name: item.name,
         inception: new Date(item.createdAt * 1000),
@@ -255,7 +263,7 @@ export const FundOverview: React.FC = () => {
 
   const options: TableOptions<RowData> = React.useMemo(
     () => ({
-      columns: columns(version?.name),
+      columns: columns(version?.name, prefix || '', history),
       data,
       pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,

@@ -68,7 +68,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
           {new BigNumber(cell.row.original.eth).isGreaterThanOrEqualTo('5e19') && (
             <>
               {' '}
-              <Tooltip value="Fund with more than 50 ETH">
+              <Tooltip value="Fund managing more than 50 ETH">
                 <GiCoins color="#C9B037" />
               </Tooltip>
             </>
@@ -76,7 +76,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
           {new BigNumber(cell.row.original.returnSinceInception).isLessThan(-20) && (
             <>
               {' '}
-              <Tooltip value="Bad performing fund">
+              <Tooltip value="Bad-performing fund">
                 <GiBrokenPottery color="red" />
               </Tooltip>
             </>

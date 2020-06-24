@@ -10,24 +10,30 @@ import { Button } from '~/components/Form/Button/Button';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { BlockActions } from '~/storybook/Block/Block';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
+import { FundPolicy, PriceTolerancePolicy } from '../../FundPolicies/FundPolicies.query';
 
 const validationSchema = Yup.object().shape({
   priceTolerance: Yup.number().label('Price Tolerance').required().min(0).max(100),
 });
 
 const initialValues = {
-  priceTolerance: 10,
+  priceTolerance: 25,
 };
 
 export interface PriceToleranceConfigurationProps {
   policyManager: string;
   policy: PolicyDefinition;
+  allPolicies?: FundPolicy[];
   startTransaction: (tx: Deployment<PriceTolerance>, name: string) => void;
 }
 
 export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
+
+  const preExistingPolicy = props.allPolicies?.find((policy) => policy.identifier === 'PriceTolerance') as
+    | PriceTolerancePolicy
+    | undefined;
 
   const formik = useFormik({
     validationSchema,
@@ -37,6 +43,19 @@ export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationPr
       props.startTransaction(tx, 'Deploy PriceTolerance Contract');
     },
   });
+
+  if (preExistingPolicy) {
+    return (
+      <>
+        <SectionTitle>Configure Price Tolerance Policy</SectionTitle>
+        <NotificationBar kind="neutral">
+          <NotificationContent>
+            You have already deployed a price tolerance policy. You cannot deploy a second price tolerance policy.
+          </NotificationContent>
+        </NotificationBar>
+      </>
+    );
+  }
 
   return (
     <>
@@ -48,6 +67,14 @@ export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationPr
           current price and its price as of the last on-chain price update. Note that while you can edit your price
           tolerance policy to make it more conservative, you cannot go the other direction. In other words, if you first
           implement a 7% cap, you could later change it to 5% but not 10%.
+        </NotificationContent>
+      </NotificationBar>
+      <NotificationBar kind="error">
+        <NotificationContent>
+          Deploying a price tolerance policy cannot be undone. Once you have deployed a price tolerance policy, you will
+          not be able to change the parameters of the policy. <br />
+          <br />
+          Policies protect investors, but they can also make your fund un-usable if they are too stringent.
         </NotificationContent>
       </NotificationBar>
       <Form formik={formik}>

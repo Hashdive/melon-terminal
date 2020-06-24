@@ -13,7 +13,7 @@ import { Button } from '~/components/Form/Button/Button';
 import { CheckboxGroup } from '~/components/Form/CheckboxGroup/CheckboxGroup';
 import { Checkbox } from '~/components/Form/Checkbox/Checkbox';
 import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
-import { SectionTitle } from '~/storybook/Title/Title';
+import { SectionTitle, TitleTooltip, SectionTitleContainer, Title } from '~/storybook/Title/Title';
 import { Block, BlockSection, BlockActions } from '~/storybook/Block/Block';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { RequiresFundSetupNotStarted } from '~/components/Gates/RequiresFundSetupNotStarted/RequiresFundSetupNotStarted';
@@ -22,7 +22,8 @@ import { Link } from '~/storybook/Link/Link';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { getNetworkName } from '~/config';
 import { AccountContextValue } from '~/components/Contexts/Account/Account';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { Tooltip, TooltipContainer } from '~/storybook/Tooltip/Tooltip';
+import { FaRegQuestionCircle } from 'react-icons/fa';
 
 export interface WalletFundSetupForm {
   name: string;
@@ -205,9 +206,14 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
   return (
     <Form formik={formik}>
       <BlockSection>
-        <Tooltip placement="auto" value="The public-facing name of your fund.">
-          <SectionTitle>Fund</SectionTitle>
-        </Tooltip>
+        <SectionTitleContainer>
+          <Title>Fund</Title>
+          <TooltipContainer>
+            <Tooltip placement="auto" value="The public-facing name of your fund.">
+              <FaRegQuestionCircle />
+            </Tooltip>
+          </TooltipContainer>
+        </SectionTitleContainer>
         <NotificationBar kind="neutral">
           <NotificationContent>The fund name you choose now cannot be changed later.</NotificationContent>
         </NotificationBar>

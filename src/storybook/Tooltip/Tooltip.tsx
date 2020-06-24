@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Manager, Reference, Popper } from 'react-popper';
 import * as S from './Tooltip.styles';
+import styled from 'styled-components';
 
 export interface TooltipProps {
   value?: string | number | React.ReactNode;
@@ -47,3 +48,8 @@ export const Tooltip: React.FC<TooltipProps> = ({ value, placement, children }) 
     </Manager>
   );
 };
+
+export const TooltipContainer = styled.div`
+  margin-left: ${(props) => props.theme.spaceUnits.xxs};
+  margin-bottom: ${(props) => props.theme.spaceUnits.xxs};
+`;

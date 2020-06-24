@@ -36,3 +36,13 @@ export const SectionTitle = styled.h2`
     justify-content: space-between;
   }
 `;
+
+export const SectionTitleContainer = styled.div`
+  padding-bottom: ${(props) => props.theme.spaceUnits.xs};
+  border-bottom: ${(props) => props.theme.border.borderSecondary};
+  margin-bottom: ${(props) => props.theme.spaceUnits.m};
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+`;

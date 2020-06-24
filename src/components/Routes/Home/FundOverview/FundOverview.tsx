@@ -28,13 +28,14 @@ import { useConnectionState } from '~/hooks/useConnectionState';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 import {
   GiCaesar,
-  GiCoins,
-  GiBrokenPottery,
+  GiIonicColumn,
+  GiMedusaHead,
   GiLaurels,
   GiClosedDoors,
   GiPegasus,
-  GiPiggyBank,
-  GiShamblingZombie,
+  GiGrapes,
+  GiAncientRuins,
+  GiMinotaur,
 } from 'react-icons/gi';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
@@ -51,9 +52,11 @@ type RowData = {
   usd: BigNumber;
   isShutdown: boolean;
   version: string;
+  userWhitelist: boolean;
+  closed: boolean;
 };
 
-const columns = (version: string, prefix: string, history: any): Column<RowData>[] => {
+const columns = (prefix: string, history: any): Column<RowData>[] => {
   return [
     {
       Header: 'Name',
@@ -87,7 +90,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
             <>
               {' '}
               <Tooltip value="Fund managing more than 50 ETH">
-                <GiCoins color="#C9B037" />
+                <GiIonicColumn color="#C9B037" />
               </Tooltip>
             </>
           )}
@@ -95,7 +98,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
             <>
               {' '}
               <Tooltip value="Tiny fund">
-                <GiPiggyBank color="FF6EC7" />
+                <GiGrapes color="grey" />
               </Tooltip>
             </>
           )}
@@ -103,35 +106,42 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
             <>
               {' '}
               <Tooltip value="Empty fund">
-                <GiShamblingZombie color="grey" />
+                <GiAncientRuins color="grey" />
               </Tooltip>
             </>
           )}
           {new BigNumber(cell.row.original.returnSinceInception).isLessThan(-20) && (
             <>
               {' '}
-              <Tooltip value="Bad-performing fund">
-                <GiBrokenPottery color="red" />
+              <Tooltip value="Underperforming fund">
+                <GiMedusaHead color="red" />
               </Tooltip>
             </>
           )}
           {new BigNumber(cell.row.original.returnSinceInception).isGreaterThan(50) && (
             <>
               {' '}
-              <Tooltip value="Well-performing fund">
+              <Tooltip value="Highperforming fund">
                 <GiPegasus color="green" />
               </Tooltip>
             </>
           )}
-          {cell.row.original.isShutdown ||
-            (cell.row.original.version !== version && (
-              <>
-                {' '}
-                <Tooltip value="Closed for investment">
-                  <GiClosedDoors color="grey" />
-                </Tooltip>
-              </>
-            ))}
+          {cell.row.original.closed && (
+            <>
+              {' '}
+              <Tooltip value="Fund is closed for investment">
+                <GiClosedDoors color="grey" />
+              </Tooltip>
+            </>
+          )}
+          {cell.row.original.userWhitelist && (
+            <>
+              {' '}
+              <Tooltip value="Fund operates a user whitelist">
+                <GiMinotaur color="grey" />
+              </Tooltip>
+            </>
+          )}
         </span>
       ),
     },
@@ -157,7 +167,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       },
     },
     {
-      Header: 'AUM $',
+      Header: 'AUM [$]',
       accessor: 'usd',
       sortType: (rowA, rowB, columnId) => {
         const a = new BigNumber(rowA.values[columnId]);
@@ -255,15 +265,18 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       Header: 'Invest',
       accessor: 'address',
       disableSortBy: true,
-      Cell: (cell) => (
-        <Button
-          kind="secondary"
-          size="small"
-          onClick={() => history.push(`/${prefix}/fund/${cell.row.original.address}/invest`)}
-        >
-          Invest
-        </Button>
-      ),
+      Cell: (cell) =>
+        cell.row.original.userWhitelist || cell.row.original.closed ? (
+          <></>
+        ) : (
+          <Button
+            kind="secondary"
+            size="small"
+            onClick={() => history.push(`/${prefix}/fund/${cell.row.original.address}/invest`)}
+          >
+            Invest
+          </Button>
+        ),
       cellProps: {
         style: {
           textAlign: 'right',
@@ -283,6 +296,7 @@ function useTableDate() {
   const result = useFundOverviewQuery();
   const rates = useRatesOrThrow();
   const environment = useEnvironment()!;
+  const [version] = useVersionQuery();
 
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
@@ -303,6 +317,9 @@ function useTableDate() {
         item.calculationsHistory[1]?.sharePrice
       );
 
+      const userWhitelist = !!item.policyManager.policies.find((policy) => policy.identifier === 'UserWhitelist');
+      const closed = item.isShutdown || item.version.name !== version.name;
+
       return {
         rank: index + 1,
         address: item.id,
@@ -315,6 +332,8 @@ function useTableDate() {
         usd,
         isShutdown: item.isShutdown,
         version: item.version.name,
+        userWhitelist,
+        closed,
       };
     });
   }, [result.data]);
@@ -326,13 +345,12 @@ export const FundOverview: React.FC = () => {
   const data = useTableDate();
   const history = useHistory();
   const connection = useConnectionState();
-  const [version] = useVersionQuery();
 
   const prefix = getNetworkName(connection.network);
 
   const leaderboardOptions: TableOptions<RowData> = React.useMemo(
     () => ({
-      columns: columns(version?.name, prefix || '', history),
+      columns: columns(prefix || '', history),
       data,
       pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,
@@ -343,7 +361,7 @@ export const FundOverview: React.FC = () => {
 
   const options: TableOptions<RowData> = React.useMemo(
     () => ({
-      columns: columns(version?.name, prefix || '', history),
+      columns: columns(prefix || '', history),
       data,
       pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,
@@ -365,14 +383,6 @@ export const FundOverview: React.FC = () => {
 
   return (
     <>
-      <Block>
-        <SectionTitle>Melon Fund Leaderboard</SectionTitle>
-        <p>Best 1D performance</p>
-        <p>Best MTD performance</p>
-        <p>Best YTD performance</p>
-        <p>Most number of positive months</p>
-        <p>Largest fund</p>
-      </Block>
       <Block>
         <SectionTitle> Melon Fund Universe</SectionTitle>
         <CommonTable table={table} />

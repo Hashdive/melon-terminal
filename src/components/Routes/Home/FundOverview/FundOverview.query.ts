@@ -32,6 +32,13 @@ export interface Fund {
       symbol: string;
     };
   };
+  policyManager: {
+    id: string;
+    policies: {
+      id: string;
+      identifier: string;
+    }[];
+  };
   holdings: {
     id: string;
     assetGav: BigNumber;
@@ -46,26 +53,6 @@ export interface Fund {
     id: string;
     sharePrice: BigNumber;
     timestamp: string;
-  }[];
-}
-
-export interface FundProcessed {
-  id: string;
-  name: string;
-  address: string;
-  inception: number;
-  aumEth: BigNumber;
-  aumUsd: BigNumber;
-  sharePrice: BigNumber;
-  change: BigNumber;
-  shares: BigNumber;
-  denomination: string;
-  investments: number;
-  version: string;
-  status: string;
-  allocation: {
-    asset: string;
-    percentage: number;
   }[];
 }
 
@@ -104,6 +91,13 @@ const FundOverviewQuery = gql`
         denominationAsset {
           id
           symbol
+        }
+      }
+      policyManager {
+        id
+        policies {
+          id
+          identifier
         }
       }
       holdings(orderBy: assetGav, orderDirection: desc, first: 2) {

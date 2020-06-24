@@ -8,12 +8,7 @@ import { SectionTitle } from '~/storybook/Title/Title';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { Block } from '~/storybook/Block/Block';
 
-import styled, { css } from 'styled-components';
-
-export const MetricsBlock = styled.div`
-  width: 100%;
-  text-align: center;
-`;
+import styled from 'styled-components';
 
 export const MetricsUsd = styled.div`
   width: 100%;
@@ -33,7 +28,14 @@ export const FundMetrics: React.FC = () => {
   const rates = useTokenRates('ETH');
 
   if (metricsQuery.loading || !metrics) {
-    return <></>;
+    return (
+      <>
+        <Block>
+          <SectionTitle>Assets Managed with Melon Protocol</SectionTitle>
+          <Spinner />
+        </Block>
+      </>
+    );
   }
 
   const networkGav = fromTokenBaseUnit(metrics.state?.networkGav, 18);
@@ -46,22 +48,16 @@ export const FundMetrics: React.FC = () => {
 
   return (
     <>
-      <Grid>
-        <GridRow justify="center">
-          <GridCol xs={12} sm={12}>
-            <MetricsBlock>
-              Assets Managed with Melon Protocol
-              <MetricsUsd>
-                <FormattedNumber value={mlnPrice} decimals={0} prefix="$" />
-              </MetricsUsd>
-              <MetricsOthers>
-                {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds{' / '}
-                {parseInt(allInvestments ?? '0', 10)} investments
-              </MetricsOthers>
-            </MetricsBlock>
-          </GridCol>
-        </GridRow>
-      </Grid>
+      <Block>
+        <SectionTitle>Assets Managed with Melon Protocol</SectionTitle>
+        <MetricsUsd>
+          <FormattedNumber value={mlnPrice} decimals={0} prefix="$" />
+        </MetricsUsd>
+        <MetricsOthers>
+          {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds{' / '}
+          {parseInt(allInvestments ?? '0', 10)} investments
+        </MetricsOthers>
+      </Block>
     </>
   );
 };

@@ -31,7 +31,7 @@ const theme = {
     primary: '"Source Serif Pro", serif',
   },
   fontSizes: {
-    xxxl: '4rem',
+    xxxl: '3rem',
     xxl: '1.25rem',
     xl: '1.125rem',
     l: '1rem',

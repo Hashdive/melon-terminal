@@ -1,16 +1,7 @@
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useHistory } from 'react-router';
-import {
-  Column,
-  TableOptions,
-  useGlobalFilter,
-  usePagination,
-  useRowState,
-  useSortBy,
-  useTable,
-  useFilters,
-} from 'react-table';
+import { Column, TableOptions, useGlobalFilter, usePagination, useRowState, useSortBy, useTable } from 'react-table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { CommonTable } from '~/components/Common/Table/Table';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
@@ -71,77 +62,23 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
         <span>
           {cell.value}
           <br />
-          {cell.row.original.rank === 1 && (
-            <Tooltip value="Largest fund on Melon">
-              <GiCaesar color="#C9B037" />
-            </Tooltip>
-          )}
-          {cell.row.original.rank === 2 && (
-            <Tooltip value="2nd largest fund on Melon">
-              <GiLaurels color="#B4B4B4" />
-            </Tooltip>
-          )}
-          {cell.row.original.rank === 3 && (
-            <Tooltip value="3rd largest fund on Melon">
-              <GiLaurels color="#AD8A56" />
-            </Tooltip>
-          )}
+          {cell.row.original.rank === 1 && <GiCaesar color="#C9B037" title="Largest fund on Melon" />}{' '}
+          {cell.row.original.rank === 2 && <GiLaurels color="#B4B4B4" title="2nd largest fund on Melon" />}{' '}
+          {cell.row.original.rank === 3 && <GiLaurels color="#AD8A56" title="3rd largest fund on Melon" />}{' '}
           {new BigNumber(cell.row.original.eth).isGreaterThanOrEqualTo('5e19') && (
-            <>
-              {' '}
-              <Tooltip value="Fund managing more than 50 ETH">
-                <GiIonicColumn color="#C9B037" />
-              </Tooltip>
-            </>
-          )}
-          {new BigNumber(cell.row.original.eth).isLessThan('1e17') && !new BigNumber(cell.row.original.eth).isZero() && (
-            <>
-              {' '}
-              <Tooltip value="Tiny fund">
-                <GiGrapes color="grey" />
-              </Tooltip>
-            </>
-          )}
-          {new BigNumber(cell.row.original.eth).isZero() && (
-            <>
-              {' '}
-              <Tooltip value="Empty fund">
-                <GiAncientRuins color="grey" />
-              </Tooltip>
-            </>
-          )}
+            <GiIonicColumn color="#C9B037" title="Fund managing more than 50 ETH" />
+          )}{' '}
+          {new BigNumber(cell.row.original.eth).isLessThan('1e17') &&
+            !new BigNumber(cell.row.original.eth).isZero() && <GiGrapes color="grey" title="Tiny fund" />}{' '}
+          {new BigNumber(cell.row.original.eth).isZero() && <GiAncientRuins color="grey" title="Empty fund" />}{' '}
           {new BigNumber(cell.row.original.returnSinceInception).isLessThan(-20) && (
-            <>
-              {' '}
-              <Tooltip value="Underperforming fund">
-                <GiMedusaHead color="red" />
-              </Tooltip>
-            </>
-          )}
+            <GiMedusaHead color="red" title="Underperforming fund" />
+          )}{' '}
           {new BigNumber(cell.row.original.returnSinceInception).isGreaterThan(50) && (
-            <>
-              {' '}
-              <Tooltip value="Highperforming fund">
-                <GiPegasus color="green" />
-              </Tooltip>
-            </>
-          )}
-          {cell.row.original.closed && (
-            <>
-              {' '}
-              <Tooltip value="Fund is closed for investment">
-                <GiClosedDoors color="grey" />
-              </Tooltip>
-            </>
-          )}
-          {cell.row.original.userWhitelist && (
-            <>
-              {' '}
-              <Tooltip value="Fund operates a user whitelist">
-                <GiMinotaur color="grey" />
-              </Tooltip>
-            </>
-          )}
+            <GiPegasus color="green" title="Highperforming fund" />
+          )}{' '}
+          {cell.row.original.closed && <GiClosedDoors color="grey" title="Fund is closed for investment" />}{' '}
+          {cell.row.original.userWhitelist && <GiMinotaur color="grey" title="Fund operates a user whitelist" />}{' '}
         </span>
       ),
     },

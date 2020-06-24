@@ -21,6 +21,8 @@ export const MetricsOthers = styled.div`
   width: 100%;
   text-align: 'center';
   font-weight: ${(props) => props.theme.fontWeights.regular};
+  font-size: ${(props) => props.theme.fontSizes.xxl};
+  margin-top: 20px;
 `;
 
 export const FundMetrics: React.FC = () => {
@@ -53,10 +55,8 @@ export const FundMetrics: React.FC = () => {
         <MetricsUsd>
           <FormattedNumber value={mlnPrice} decimals={0} prefix="$" />
         </MetricsUsd>
-        <MetricsOthers>
-          {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds{' / '}
-          {parseInt(allInvestments ?? '0', 10)} investments
-        </MetricsOthers>
+        <MetricsOthers>{parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds</MetricsOthers>
+        <MetricsOthers>{parseInt(allInvestments ?? '0', 10)} investments</MetricsOthers>
       </Block>
     </>
   );

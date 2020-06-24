@@ -1,7 +1,16 @@
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useHistory } from 'react-router';
-import { Column, TableOptions, useGlobalFilter, usePagination, useRowState, useSortBy, useTable } from 'react-table';
+import {
+  Column,
+  TableOptions,
+  useGlobalFilter,
+  usePagination,
+  useRowState,
+  useSortBy,
+  useTable,
+  useFilters,
+} from 'react-table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { CommonTable } from '~/components/Common/Table/Table';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
@@ -148,7 +157,7 @@ const columns = (version: string, prefix: string, history: any): Column<RowData>
       },
     },
     {
-      Header: 'AUM [USD]',
+      Header: 'AUM $',
       accessor: 'usd',
       sortType: (rowA, rowB, columnId) => {
         const a = new BigNumber(rowA.values[columnId]);
@@ -361,6 +370,7 @@ export const FundOverview: React.FC = () => {
         <p>Best 1D performance</p>
         <p>Best MTD performance</p>
         <p>Best YTD performance</p>
+        <p>Most number of positive months</p>
         <p>Largest fund</p>
       </Block>
       <Block>

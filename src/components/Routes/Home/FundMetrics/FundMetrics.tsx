@@ -52,7 +52,7 @@ export const FundMetrics: React.FC = () => {
             <MetricsBlock>
               Assets Managed with Melon Protocol
               <MetricsUsd>
-                <FormattedNumber value={mlnPrice} decimals={0} suffix="USD" />
+                <FormattedNumber value={mlnPrice} decimals={0} prefix="$" />
               </MetricsUsd>
               <MetricsOthers>
                 {parseInt(activeFunds ?? '0', 10) + parseInt(nonActiveFunds ?? '0', 10)} funds{' / '}

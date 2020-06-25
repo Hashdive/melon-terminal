@@ -15,7 +15,9 @@ export const SelectIcon = styled.span`
   margin-right: 10px;
 `;
 
-export const SelectLabel = styled.span``;
+export const SelectLabel = styled.span`
+  color: ${(props) => props.theme.mainColors.textColor};
+`;
 
 export const SelectDescription = styled.span`
   font-size: ${(props) => props.theme.fontSizes.m};
@@ -47,6 +49,13 @@ export const ComponentsMenuList = styled.div`
 export const ComponentsSingleValue = styled.div`
   .melon__single-value {
     color: ${(props) => props.theme.mainColors.textColor};
+  }
+`;
+
+export const ComponentsMultiValue = styled.div`
+  .melon__multi-value {
+    color: ${(props) => props.theme.mainColors.textColor};
+    background: ${(props) => props.theme.mainColors.secondary};
   }
 `;
 

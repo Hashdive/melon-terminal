@@ -146,9 +146,11 @@ const SingleValue: React.FC<SingleValueProps<SelectOption>> = (props) => (
 );
 
 const MultiValue: React.FC<MultiValueProps<SelectOption>> = (props) => (
-  <components.MultiValue {...props}>
-    <SelectLabel {...props.data} />
-  </components.MultiValue>
+  <S.ComponentsMultiValue>
+    <components.MultiValue {...props}>
+      <SelectLabel {...props.data} />
+    </components.MultiValue>
+  </S.ComponentsMultiValue>
 );
 
 const Control: React.FC<ControlProps<SelectOption>> = (props) => (

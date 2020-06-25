@@ -205,21 +205,20 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
   return (
     <Form formik={formik}>
       <BlockSection>
-        <TitleWithTooltip title="Fund" placement="auto" tooltipValue="The public-facing name of your fund" />
-        <NotificationBar kind="error">
-          <NotificationContent>The fund name you choose now cannot be changed later.</NotificationContent>
-        </NotificationBar>
+        <TitleWithTooltip
+          title="Fund"
+          placement="auto"
+          tooltipValue="The public-facing name of your fund. The name you choose now cannot be edited later."
+        />
         <Input name="name" label="Name" />
       </BlockSection>
       <BlockSection>
         <TitleWithTooltip
           title="Fees"
           placement="auto"
-          tooltipValue="The rates you will charge to manage your fund, and the frequency at which you will charge them."
+          tooltipValue="The rates you will charge to manage your fund, and the frequency at which you will charge them. The fees you choose now cannot be edited later."
         />
-        <NotificationBar kind="error">
-          <NotificationContent>The fees you choose now cannot be changed later.</NotificationContent>
-        </NotificationBar>
+
         <Input name="managementFee" label="Management Fee (%)" type="number" step="any" />
         <Input name="performanceFee" label="Performance Fee (%)" type="number" step="any" />
         <Input name="performanceFeePeriod" label="Performance Fee Period (days)" type="number" step="any" />

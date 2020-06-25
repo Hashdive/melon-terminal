@@ -36,16 +36,5 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
     return <>empty</>;
   }
 
-  return (
-    <>
-      <ReactApexChart options={options} series={series} type="donut" width={40} />
-      {/* <ul>
-        {props.holdings.map((item) => (
-          <li key={item.token.symbol}>
-            {item.value?.dividedBy(props.gav).multipliedBy(100).toFixed(2)}% {item.token.symbol}
-          </li>
-        ))}
-      </ul> */}
-    </>
-  );
+  return <ReactApexChart options={options} series={series} type="donut" width={40} />;
 };

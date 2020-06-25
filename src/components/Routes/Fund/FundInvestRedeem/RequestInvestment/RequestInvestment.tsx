@@ -26,6 +26,7 @@ import { Link } from '~/storybook/Link/Link';
 import { Token } from '@melonproject/melongql';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { FaRegQuestionCircle } from 'react-icons/fa';
 
 export interface RequestInvestmentProps {
   fundAddress: string;
@@ -230,10 +231,7 @@ export const RequestInvestment = React.forwardRef(
 
     return (
       <Form formik={formik}>
-        <Tooltip
-          placement="top"
-          value="This parameter is either entered manually or calculated automatically based on the amount of asset you invest and the max premium to current share price. In the event that it is calculated automatically, it represents the LEAST number of shares you will be granted upon the execution of your investment request."
-        >
+        <>
           <TokenValueInput
             name="requestedShares"
             label="Number of shares"
@@ -241,8 +239,13 @@ export const RequestInvestment = React.forwardRef(
             disabled={loading}
             onChange={handleRequestedSharesChange}
           />
-        </Tooltip>
-
+          <Tooltip
+            placement="top"
+            value="This parameter is either entered manually or calculated automatically based on the amount of asset you invest and the max premium to current share price. In the event that it is calculated automatically, it represents the LEAST number of shares you will be granted upon the execution of your investment request."
+          >
+            <FaRegQuestionCircle />
+          </Tooltip>
+        </>
         <Tooltip
           placement="top"
           value="This parameter is either entered manually or calculated automatically based on the number of shares requested and the max premium to current share price. In the event that it is calculated automatically, it represents the HIGHEST amount of the asset that will be withdrawn from your wallet upon the execution of your investment request."

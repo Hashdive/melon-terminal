@@ -73,3 +73,35 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ label, onChang
     </Wrapper>
   );
 };
+
+export interface TokenValueInputWithTooltipProps {
+  name: string;
+  label?: string;
+  // token: TokenDefinition;
+  disabled?: boolean;
+  noIcon?: boolean;
+  onChange?: (value: TokenValue, before?: TokenValue) => void;
+  tile: string;
+  placement:
+    | 'auto'
+    | 'left'
+    | 'right'
+    | 'top'
+    | 'bottom'
+    | 'auto-start'
+    | 'auto-end'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'right-start'
+    | 'right-end'
+    | 'left-start'
+    | 'left-end'
+    | undefined;
+  tooltipValue: string;
+}
+
+export const TokenValueInputWithTooltip: React.FC<TokenValueInputWithTooltipProps> = (props) => {
+  return undefined;
+};

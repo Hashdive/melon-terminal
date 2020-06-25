@@ -41,6 +41,7 @@ import {
 } from 'react-icons/gi';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { TableGlobalFilter } from './FundFilters';
+import { FundAllocationChart } from './FundAllocationChart';
 
 export type RowData = {
   rank: number;
@@ -180,27 +181,17 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       disableSortBy: true,
       Cell: (cell) =>
         !new BigNumber(cell.row.original.eth).isZero() ? (
-          <ul>
-            {cell.value.map((item) =>
-              !new BigNumber(item.value || 0).isZero() ? (
-                <li key={item.token.symbol}>
-                  {item.value?.dividedBy(cell.row.original.eth).multipliedBy(100).toFixed(2)}% {item.token.symbol}
-                </li>
-              ) : (
-                <li>-</li>
-              )
-            )}
-            {cell.value.length === 1 && <li>-</li>}
-          </ul>
+          <FundAllocationChart holdings={cell.value} gav={cell.row.original.eth} />
         ) : (
-          <ul>
-            <li>-</li>
-            <li>-</li>
-          </ul>
+          <></>
         ),
       cellProps: {
         style: {
           textAlign: 'right',
+          float: 'right',
+          verticalAlign: 'bottom',
+          display: 'flex',
+          alignItems: 'bottom',
         },
       },
       headerProps: {
@@ -249,11 +240,13 @@ function useTableDate() {
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
     return funds.map<RowData>((item, index) => {
-      const holdings = item.holdings.map((item) => {
-        const token = environment.getToken(item.asset.symbol);
-        const quantity = item.assetGav;
-        return new TokenValue(token, quantity);
-      });
+      const holdings = item.holdings
+        .filter((item) => !new BigNumber(item.assetGav).isZero())
+        .map((item) => {
+          const token = environment.getToken(item.asset.symbol);
+          const quantity = item.assetGav;
+          return new TokenValue(token, quantity);
+        });
 
       const eth = item.gav;
       const usd = new BigNumber(item.gav).multipliedBy(rates.ETH.USD);

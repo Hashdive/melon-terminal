@@ -6,7 +6,7 @@ import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { SectionTitle } from '~/storybook/Title/Title';
 
 const BadgeIcon = styled.div`
-  padding: 2px;
+  padding: 2px 10px 0px 2px;
   background-color: ${(props) => props.theme.mainColors.secondary};
   float: left;
   margin: 0;
@@ -14,15 +14,24 @@ const BadgeIcon = styled.div`
 `;
 
 const BadgeText = styled.div`
-  padding-left: 5px;
+  padding-left: 10px;
   float: right;
-  vertical-align: bottom;
+`;
+
+const BadgeTextFundName = styled.div`
+  font-size: ${(props) => props.theme.fontSizes.xxl};
+`;
+
+const BadgeTextBadgeName = styled.div`
+  font-size: ${(props) => props.theme.fontSizes.s};
 `;
 
 const BadgeWrapper = styled.div`
   background-color: ${(props) => props.theme.mainColors.secondary};
   vertical-align: middle;
   width: 100%;
+  display: flex;
+  align-items: center;
 `;
 
 interface FundBadgesOverviewProps {
@@ -40,35 +49,23 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiCaesar title="Largest fund" size="3rem" />
+                <GiCaesar title="Largest fund" size="4rem" />
               </BadgeIcon>
-              <BadgeText>Rhino Fund</BadgeText>
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+              </BadgeText>
             </BadgeWrapper>
           </GridCol>
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiTrident title="Trident" size="3rem" color="#C9B037" />
+                <GiTrident title="Trident" size="4rem" />
               </BadgeIcon>
-              <BadgeText>Fund 1</BadgeText>
-            </BadgeWrapper>
-          </GridCol>
-        </GridRow>
-        <GridRow>
-          <GridCol xs={12} sm={6}>
-            <BadgeWrapper>
-              <BadgeIcon>
-                <GiPegasus title="Pegasus" size="3rem" color="#C9B037" />
-              </BadgeIcon>
-              Fund 3
-            </BadgeWrapper>
-          </GridCol>
-          <GridCol xs={12} sm={6}>
-            <BadgeWrapper>
-              <BadgeIcon>
-                <GiAtlas title="Atlas" size="3rem" color="#C9B037" />
-              </BadgeIcon>
-              Fund 4
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+              </BadgeText>
             </BadgeWrapper>
           </GridCol>
         </GridRow>
@@ -76,17 +73,47 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiSpartan title="Spartan" size="3rem" color="#C9B037" />
+                <GiPegasus title="Pegasus" size="4rem" />
               </BadgeIcon>
-              Fund 5
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Trident Shield</BadgeTextBadgeName>
+              </BadgeText>
             </BadgeWrapper>
           </GridCol>
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiCentaur title="Centaur" size="3rem" color="#C9B037" />
+                <GiAtlas title="Atlas" size="4rem" />
               </BadgeIcon>
-              Fund 6
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Atlas</BadgeTextBadgeName>
+              </BadgeText>
+            </BadgeWrapper>
+          </GridCol>
+        </GridRow>
+        <GridRow>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
+                <GiSpartan title="Spartan" size="4rem" />
+              </BadgeIcon>
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+              </BadgeText>
+            </BadgeWrapper>
+          </GridCol>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
+                <GiCentaur title="Centaur" size="4rem" />
+              </BadgeIcon>
+              <BadgeText>
+                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+              </BadgeText>
             </BadgeWrapper>
           </GridCol>
         </GridRow>

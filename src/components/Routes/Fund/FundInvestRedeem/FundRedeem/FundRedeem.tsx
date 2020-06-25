@@ -25,6 +25,7 @@ import { TokenValue } from '~/TokenValue';
 import { tokenValueSchema } from '~/utils/formValidation';
 import { sharesToken } from '~/utils/sharesToken';
 import { useFundRedeemQuery } from './FundRedeem.query';
+import { TitleWithTooltip } from '~/components/Common/TitleWithTooltip/TitleWithTooltip';
 
 export interface FundRedeemProps {
   address: string;
@@ -116,7 +117,11 @@ export const FundRedeem: React.FC<FundRedeemProps> = ({ address }) => {
 
   return (
     <Block>
-      <SectionTitle>Redeem</SectionTitle>
+      <TitleWithTooltip
+        title="Redeem"
+        placement="auto"
+        tooltipValue="Fill out the form below to request a redemption of your investment. Redemptions are granted in kind; a pro-rated portion of the fund's token holdings will be transferred to your wallet in exchange for your shares in the fund."
+      />
 
       {shares && !shares?.balanceOf?.isZero() && (
         <>

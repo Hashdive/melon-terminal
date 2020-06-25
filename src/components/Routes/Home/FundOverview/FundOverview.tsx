@@ -188,10 +188,11 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
-          float: 'right',
-          verticalAlign: 'bottom',
-          display: 'flex',
-          alignItems: 'bottom',
+          verticalAlign: 'middle',
+          alignItems: 'center',
+          height: '100%',
+          paddingTop: 0,
+          marginTop: 0,
         },
       },
       headerProps: {

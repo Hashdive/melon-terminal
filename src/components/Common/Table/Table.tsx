@@ -52,7 +52,7 @@ export const HeaderRow = styled.tr`
 export const TableTools = styled.div`
   width: 100%;
   padding-top: 10px;
-  padding-bottom: 50px;
+  padding-bottom: 10px;
 `;
 
 export const TableToolsFilter = styled.div`
@@ -104,7 +104,6 @@ export interface BodyRowProps {
 }
 
 export const BodyRow = styled.tr<BodyRowProps>`
-  line-height: 1;
   border-top: 1px solid ${(props) => props.theme.mainColors.secondaryDarkAlpha};
 
   &:not(:last-child) {
@@ -182,14 +181,17 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
   });
 
   const pagination = hasPagination ? <TablePagination<TData> table={props.table} /> : null;
-  const filter = props.globalFilter || (hasGlobalFilter ? <TableGlobalFilter<TData> table={props.table} /> : null);
+  const filter =
+    props.globalFilter ||
+    (hasGlobalFilter ? (
+      <TableToolsFilter>
+        <TableGlobalFilter<TData> table={props.table} />
+      </TableToolsFilter>
+    ) : null);
 
   return (
     <>
-      <TableTools>
-        <TableToolsFilter>{filter}</TableToolsFilter>
-        <TableToolsPagination>{pagination}</TableToolsPagination>
-      </TableTools>
+      <TableTools>{filter}</TableTools>
       <Table {...props.table.getTableProps()}>
         <TableHeader>{header}</TableHeader>
         <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>

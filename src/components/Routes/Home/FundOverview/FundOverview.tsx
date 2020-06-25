@@ -318,8 +318,10 @@ export const FundOverview: React.FC = () => {
               return false;
             }
 
-            return row.values.holdings.some((holding: TokenValue) =>
-              filterValue.assets.some((asset: string) => holding.token.symbol === asset && !holding.value?.isZero())
+            return filterValue.assets.every((asset: string) =>
+              row.values.holdings.some(
+                (holding: TokenValue) => holding.token.symbol === asset && !holding.value?.isZero()
+              )
             );
           });
       },

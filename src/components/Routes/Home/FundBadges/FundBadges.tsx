@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 
 import { FundBadgesOverview } from './FundBadgesOverview';
-import { FundBadgeDetails } from './FundBadgeDetails';
 import { FundBadgeDirectory } from './FundBadgeDirectory';
 
 export const FundBadges: React.FC = () => {
-  const [badge, setBadge] = useState('overview');
+  const [showDirectory, setShowDirectory] = useState(false);
 
-  if (badge === 'directory') {
-    return <FundBadgeDirectory setBadge={setBadge} />;
+  if (showDirectory) {
+    return <FundBadgeDirectory setShowDirectory={setShowDirectory} />;
   }
 
-  if (badge !== 'overview') {
-    return <FundBadgeDetails badge={badge} setBadge={setBadge} />;
-  }
-
-  return <FundBadgesOverview setBadge={setBadge} />;
+  return <FundBadgesOverview setShowDirectory={setShowDirectory} />;
 };

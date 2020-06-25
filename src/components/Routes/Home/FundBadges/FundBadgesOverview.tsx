@@ -5,86 +5,91 @@ import { Block } from '~/storybook/Block/Block';
 import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { SectionTitle } from '~/storybook/Title/Title';
 
-const IconWrapper = styled.div`
-  margin: 0 auto;
+const BadgeIcon = styled.div`
+  padding: 2px;
+  background-color: ${(props) => props.theme.mainColors.secondary};
+  float: left;
+  margin: 0;
+  vertical-align: bottom;
 `;
 
-const CenteredGridCol = styled(GridCol)`
-  text-align: center;
-  cursor: pointer;
+const BadgeText = styled.div`
+  padding-left: 5px;
+  float: right;
+  vertical-align: bottom;
 `;
 
-const GridRowWithPadding = styled(GridRow)`
-  padding-top: 0px;
+const BadgeWrapper = styled.div`
+  background-color: ${(props) => props.theme.mainColors.secondary};
+  vertical-align: middle;
+  width: 100%;
 `;
-
-const BadgeWrapper = styled.div``;
 
 interface FundBadgesOverviewProps {
-  setBadge: React.Dispatch<React.SetStateAction<string>>;
+  setShowDirectory: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => {
   return (
     <Block>
       <SectionTitle>
-        Badges of Honour <GiInfo onClick={() => props.setBadge('directory')} />
+        Badges of Honour <GiInfo onClick={() => props.setShowDirectory(true)} />
       </SectionTitle>
       <Grid noGap={true}>
-        <GridRowWithPadding>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('caesar')}>
-              <IconWrapper>
-                <GiCaesar title="Largest fund" size="3rem" color="#C9B037" />
-              </IconWrapper>
-              Rhino Fund
+        <GridRow>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
+                <GiCaesar title="Largest fund" size="3rem" />
+              </BadgeIcon>
+              <BadgeText>Rhino Fund</BadgeText>
             </BadgeWrapper>
-          </CenteredGridCol>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('trident')}>
-              <IconWrapper>
+          </GridCol>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
                 <GiTrident title="Trident" size="3rem" color="#C9B037" />
-              </IconWrapper>
-              Fund 1
+              </BadgeIcon>
+              <BadgeText>Fund 1</BadgeText>
             </BadgeWrapper>
-          </CenteredGridCol>
-        </GridRowWithPadding>
-        <GridRowWithPadding>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('pegasus')}>
-              <IconWrapper>
+          </GridCol>
+        </GridRow>
+        <GridRow>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
                 <GiPegasus title="Pegasus" size="3rem" color="#C9B037" />
-              </IconWrapper>
+              </BadgeIcon>
               Fund 3
             </BadgeWrapper>
-          </CenteredGridCol>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('atlas')}>
-              <IconWrapper>
+          </GridCol>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
                 <GiAtlas title="Atlas" size="3rem" color="#C9B037" />
-              </IconWrapper>
+              </BadgeIcon>
               Fund 4
             </BadgeWrapper>
-          </CenteredGridCol>
-        </GridRowWithPadding>
-        <GridRowWithPadding>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('spartan')}>
-              <IconWrapper>
+          </GridCol>
+        </GridRow>
+        <GridRow>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
                 <GiSpartan title="Spartan" size="3rem" color="#C9B037" />
-              </IconWrapper>
+              </BadgeIcon>
               Fund 5
             </BadgeWrapper>
-          </CenteredGridCol>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('centaur')}>
-              <IconWrapper>
+          </GridCol>
+          <GridCol xs={12} sm={6}>
+            <BadgeWrapper>
+              <BadgeIcon>
                 <GiCentaur title="Centaur" size="3rem" color="#C9B037" />
-              </IconWrapper>
+              </BadgeIcon>
               Fund 6
             </BadgeWrapper>
-          </CenteredGridCol>
-        </GridRowWithPadding>
+          </GridCol>
+        </GridRow>
       </Grid>
     </Block>
   );

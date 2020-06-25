@@ -4,14 +4,14 @@ import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { SectionTitle } from '~/storybook/Title/Title';
 
 interface FundBadgeDetailsProps {
-  setBadge: React.Dispatch<React.SetStateAction<string>>;
+  setShowDirectory: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const FundBadgeDirectory: React.FC<FundBadgeDetailsProps> = (props) => {
   return (
     <Block>
       <SectionTitle>Badge Directory</SectionTitle>
-      <div onClick={() => props.setBadge('overview')}>Back to main</div>
+      <div onClick={() => props.setShowDirectory(false)}>Back to main</div>
     </Block>
   );
 };

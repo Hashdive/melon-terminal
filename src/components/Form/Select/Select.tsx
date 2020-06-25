@@ -11,7 +11,7 @@ import {
   SingleValueProps,
   ValueType,
 } from 'react-select';
-import { MenuListProps, MenuListComponentProps } from 'react-select/src/components/Menu';
+import { MenuListComponentProps } from 'react-select/src/components/Menu';
 import { Error, Label, useField, Wrapper } from '~/components/Form/Form';
 import { IconName, Icons } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
@@ -27,7 +27,7 @@ export interface SelectOption<TValue = string | number> {
 export interface SelectProps<TOption extends SelectOption = SelectOption> extends SelectPropsBase<TOption> {
   options: OptionsType<TOption>;
   name: string;
-  label?: string;
+  label?: string | JSX.Element;
   Component?: React.ElementType<SelectPropsBase<TOption>>;
 }
 

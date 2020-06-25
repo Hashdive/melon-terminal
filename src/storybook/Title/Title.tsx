@@ -44,5 +44,5 @@ export const SectionTitleContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
 `;

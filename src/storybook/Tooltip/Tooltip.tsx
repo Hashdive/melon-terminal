@@ -48,8 +48,3 @@ export const Tooltip: React.FC<TooltipProps> = ({ value, placement, children }) 
     </Manager>
   );
 };
-
-export const TooltipContainer = styled.div`
-  margin-left: ${(props) => props.theme.spaceUnits.xxs};
-  margin-bottom: ${(props) => props.theme.spaceUnits.xxs};
-`;

@@ -1,12 +1,12 @@
 import React from 'react';
-import { SectionTitleContainer, Title } from '~/storybook/Title/Title';
+import * as S from './FormLabelWithTooltip.styles';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { FaRegQuestionCircle } from 'react-icons/fa';
 import { TooltipContainer } from '~/storybook/Tooltip/Tooltip.styles';
 
-interface TitleWithTooltipProps {
-  title: string;
-  placement:
+export interface FormLabelWithTooltipProps {
+  label: string | JSX.Element;
+  tooltipPlacement:
     | 'auto'
     | 'left'
     | 'right'
@@ -26,15 +26,15 @@ interface TitleWithTooltipProps {
   tooltipValue: string;
 }
 
-export const TitleWithTooltip: React.FC<TitleWithTooltipProps> = (props) => {
+export const FormLabelWithTooltip: React.FC<FormLabelWithTooltipProps> = (props) => {
   return (
-    <SectionTitleContainer>
-      <Title>{props.title}</Title>
+    <S.FormLabelTooltipContainer>
+      {props.label}
       <TooltipContainer>
-        <Tooltip placement={props.placement} value={props.tooltipValue}>
+        <Tooltip placement={props.tooltipPlacement} value={props.tooltipValue}>
           <FaRegQuestionCircle />
         </Tooltip>
       </TooltipContainer>
-    </SectionTitleContainer>
+    </S.FormLabelTooltipContainer>
   );
 };

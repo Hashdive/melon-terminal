@@ -22,11 +22,9 @@ import { useInvestorTotalExposureQuery } from './InvestorTotalExposure.query';
 import { useTokenRates } from '~/components/Contexts/Rates/Rates';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
-import { Link } from '~/storybook/Link/Link';
 import { Token } from '@melonproject/melongql';
 import { SectionTitle } from '~/storybook/Title/Title';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
-import { FaRegQuestionCircle } from 'react-icons/fa';
+import { FormLabelWithTooltip } from '~/components/Form/FormLabelWithTooltip/FormLabelWithTooltip';
 
 export interface RequestInvestmentProps {
   fundAddress: string;
@@ -234,48 +232,51 @@ export const RequestInvestment = React.forwardRef(
         <>
           <TokenValueInput
             name="requestedShares"
-            label="Number of shares"
+            label={
+              <FormLabelWithTooltip
+                label="Number of shares"
+                tooltipPlacement="auto"
+                tooltipValue="This parameter is either entered manually or calculated automatically based on the amount of asset you invest and the max premium to current share price. In the event that it is calculated automatically, it represents the LEAST number of shares you will be granted upon the execution of your investment request."
+              />
+            }
             noIcon={true}
             disabled={loading}
             onChange={handleRequestedSharesChange}
           />
-          <Tooltip
-            placement="top"
-            value="This parameter is either entered manually or calculated automatically based on the amount of asset you invest and the max premium to current share price. In the event that it is calculated automatically, it represents the LEAST number of shares you will be granted upon the execution of your investment request."
-          >
-            <FaRegQuestionCircle />
-          </Tooltip>
         </>
-        <Tooltip
-          placement="top"
-          value="This parameter is either entered manually or calculated automatically based on the number of shares requested and the max premium to current share price. In the event that it is calculated automatically, it represents the HIGHEST amount of the asset that will be withdrawn from your wallet upon the execution of your investment request."
-        >
-          <TokenValueSelect
-            name="investmentAmount"
-            label={
-              <>
-                Amount and asset (your wallet's balance: <TokenValueDisplay value={tokenBalance} />)
-              </>
-            }
-            tokens={props.investableAssets.map((item) => item.token)}
-            disabled={loading}
-            onChange={handleInvestmentChange}
-          />
-        </Tooltip>
+
+        <TokenValueSelect
+          name="investmentAmount"
+          label={
+            <FormLabelWithTooltip
+              label={
+                <>
+                  Amount and asset (your wallet's balance: <TokenValueDisplay value={tokenBalance} />)
+                </>
+              }
+              tooltipPlacement="auto"
+              tooltipValue="This parameter is either entered manually or calculated automatically based on the number of shares requested and the max premium to current share price. In the event that it is calculated automatically, it represents the HIGHEST amount of the asset that will be withdrawn from your wallet upon the execution of your investment request."
+            />
+          }
+          tokens={props.investableAssets.map((item) => item.token)}
+          disabled={loading}
+          onChange={handleInvestmentChange}
+        />
 
         {initialPremium > 0 && (
-          <Tooltip
-            placement="top"
-            value="Because investment requests made today are executed after tomorrow's price feed update, there's a chance that the value of a fund's shares could change dramatically in the interim. This parameter will prevent the execution of your investment request in the event that the share price increases by more than the value you've chosen."
-          >
-            <Select
-              name="premiumPercentage"
-              label="Maximum premium to current share price"
-              options={premiumOptions}
-              disabled={loading}
-              onChange={handlePremiumChange}
-            />
-          </Tooltip>
+          <Select
+            name="premiumPercentage"
+            label={
+              <FormLabelWithTooltip
+                label="Maximum premium to current share price"
+                tooltipPlacement="auto"
+                tooltipValue="Because investment requests made today are executed after tomorrow's price feed update, there's a chance that the value of a fund's shares could change dramatically in the interim. This parameter will prevent the execution of your investment request in the event that the share price increases by more than the value you've chosen."
+              />
+            }
+            options={premiumOptions}
+            disabled={loading}
+            onChange={handlePremiumChange}
+          />
         )}
 
         {formik.values.acknowledgeLimitRequired && (

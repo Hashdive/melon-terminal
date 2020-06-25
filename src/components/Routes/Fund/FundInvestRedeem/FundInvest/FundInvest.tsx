@@ -22,7 +22,6 @@ import { sharesToken } from '~/utils/sharesToken';
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { Link } from '~/storybook/Link/Link';
 import { getNetworkName } from '~/config';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { TitleWithTooltip } from '~/components/Common/TitleWithTooltip/TitleWithTooltip';
 
 export interface FundInvestProps {

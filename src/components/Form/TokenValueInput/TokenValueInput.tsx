@@ -10,7 +10,7 @@ import * as S from './TokenValueInput.styles';
 
 export interface TokenValueInputProps {
   name: string;
-  label?: string;
+  label?: string | JSX.Element;
   // token: TokenDefinition;
   disabled?: boolean;
   noIcon?: boolean;
@@ -72,36 +72,4 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ label, onChang
       {meta.touched && meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );
-};
-
-export interface TokenValueInputWithTooltipProps {
-  name: string;
-  label?: string;
-  // token: TokenDefinition;
-  disabled?: boolean;
-  noIcon?: boolean;
-  onChange?: (value: TokenValue, before?: TokenValue) => void;
-  tile: string;
-  placement:
-    | 'auto'
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'bottom'
-    | 'auto-start'
-    | 'auto-end'
-    | 'top-start'
-    | 'top-end'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'right-start'
-    | 'right-end'
-    | 'left-start'
-    | 'left-end'
-    | undefined;
-  tooltipValue: string;
-}
-
-export const TokenValueInputWithTooltip: React.FC<TokenValueInputWithTooltipProps> = (props) => {
-  return undefined;
 };

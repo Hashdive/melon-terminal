@@ -1,7 +1,18 @@
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useHistory } from 'react-router';
-import { Column, TableOptions, useGlobalFilter, usePagination, useRowState, useSortBy, useTable } from 'react-table';
+import {
+  Column,
+  TableOptions,
+  useGlobalFilter,
+  usePagination,
+  useRowState,
+  useSortBy,
+  useTable,
+  FilterValue,
+  IdType,
+  Row,
+} from 'react-table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { CommonTable } from '~/components/Common/Table/Table';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
@@ -28,10 +39,10 @@ import {
   GiAncientRuins,
   GiMinotaur,
 } from 'react-icons/gi';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
+import { TableGlobalFilter } from './FundFilters';
 
-type RowData = {
+export type RowData = {
   rank: number;
   address: string;
   name: string;
@@ -255,7 +266,7 @@ function useTableDate() {
       );
 
       const userWhitelist = !!item.policyManager.policies.find((policy) => policy.identifier === 'UserWhitelist');
-      const closed = item.isShutdown || item.version.name !== version.name;
+      const closed = item.isShutdown || item.version?.name !== version?.name;
 
       return {
         rank: index + 1,
@@ -285,15 +296,35 @@ export const FundOverview: React.FC = () => {
 
   const prefix = getNetworkName(connection.network);
 
-  const leaderboardOptions: TableOptions<RowData> = React.useMemo(
+  const filterTypes = React.useMemo(
     () => ({
-      columns: columns(prefix || '', history),
-      data,
-      pageCount: Math.ceil(data.length % 10),
-      defaultCanSort: true,
-      rowProps: (row) => ({ onClick: () => history.push(`/${prefix}/fund/${row.original.address}`) }),
+      custom: (rows: Row<RowData>[], ids: IdType<string>, filterValue: FilterValue) => {
+        if (filterValue == null) {
+          return rows;
+        }
+
+        return rows
+          .filter((row) => {
+            return filterValue.search
+              ? row.values.name.toLowerCase().startsWith(filterValue.search.toLowerCase())
+              : true;
+          })
+          .filter((row) => {
+            if (!filterValue.assets?.length) {
+              return true;
+            }
+
+            if (!row.values.holdings?.length) {
+              return false;
+            }
+
+            return row.values.holdings.some((holding: TokenValue) =>
+              filterValue.assets.some((asset: string) => holding.token.symbol === asset && !holding.value?.isZero())
+            );
+          });
+      },
     }),
-    [data, history]
+    []
   );
 
   const options: TableOptions<RowData> = React.useMemo(
@@ -303,11 +334,14 @@ export const FundOverview: React.FC = () => {
       pageCount: Math.ceil(data.length % 10),
       defaultCanSort: true,
       rowProps: (row) => ({ onClick: () => history.push(`/${prefix}/fund/${row.original.address}`) }),
+      filterTypes,
+      globalFilter: 'custom',
     }),
     [data, history]
   );
 
   const table = useTable(options, useGlobalFilter, useSortBy, usePagination, useRowState);
+  const filter = <TableGlobalFilter table={table} />;
 
   if (data.length === 0) {
     return (
@@ -322,7 +356,7 @@ export const FundOverview: React.FC = () => {
     <>
       <Block>
         <SectionTitle> Melon Fund Universe</SectionTitle>
-        <CommonTable table={table} />
+        <CommonTable table={table} globalFilter={filter} />
       </Block>
     </>
   );

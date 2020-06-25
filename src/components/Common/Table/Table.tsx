@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
 import { Button } from '~/components/Form/Button/Button';
+import { InputField } from '~/components/Form/Input/Input';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -51,7 +52,7 @@ export const HeaderRow = styled.tr`
 export const TableTools = styled.div`
   width: 100%;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 50px;
 `;
 
 export const TableToolsFilter = styled.div`
@@ -137,6 +138,7 @@ export const BodyRowHover = styled(BodyRow)`
 
 export interface CommonTableProps<TData extends object = any> {
   table: TableInstance<TData>;
+  globalFilter?: JSX.Element;
 }
 
 export function CommonTable<TData extends object>(props: CommonTableProps<TData>) {
@@ -158,6 +160,7 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
         <HeaderCell {...column.getHeaderProps(propGetter)} hover={!column.disableSortBy}>
           {column.render('Header')}
           {sortByIndicator}
+          <div>{column.Filter && column.render('Filter')}</div>
         </HeaderCell>
       );
     });
@@ -179,7 +182,7 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
   });
 
   const pagination = hasPagination ? <TablePagination<TData> table={props.table} /> : null;
-  const filter = hasGlobalFilter ? <TableGlobalFilter<TData> table={props.table} /> : null;
+  const filter = props.globalFilter || (hasGlobalFilter ? <TableGlobalFilter<TData> table={props.table} /> : null);
 
   return (
     <>
@@ -256,15 +259,14 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
 
   return (
     <span>
-      Search:{' '}
-      <SearchInput
+      <InputField
         name="search"
         value={value || ''}
         onChange={(e) => {
           setValue(e.target.value);
           onChange(e.target.value);
         }}
-        // placeholder={`${count} records...`}
+        placeholder={`Search...`}
       />
     </span>
   );

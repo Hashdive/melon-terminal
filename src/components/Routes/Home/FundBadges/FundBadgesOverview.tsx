@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GiAtlas, GiCaesar, GiCentaur, GiPegasus, GiSpartan, GiTrident } from 'react-icons/gi';
+import { GiAtlas, GiCaesar, GiCentaur, GiPegasus, GiSpartan, GiTrident, GiInfo } from 'react-icons/gi';
 import styled from 'styled-components';
 import { Block } from '~/storybook/Block/Block';
 import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
@@ -15,7 +15,7 @@ const CenteredGridCol = styled(GridCol)`
 `;
 
 const GridRowWithPadding = styled(GridRow)`
-  padding-top: 5px;
+  padding-top: 0px;
 `;
 
 const BadgeWrapper = styled.div``;
@@ -27,23 +27,25 @@ interface FundBadgesOverviewProps {
 export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => {
   return (
     <Block>
-      <SectionTitle>Badges of Honour</SectionTitle>
-      <Grid>
+      <SectionTitle>
+        Badges of Honour <GiInfo onClick={() => props.setBadge('directory')} />
+      </SectionTitle>
+      <Grid noGap={true}>
         <GridRowWithPadding>
-          <CenteredGridCol xs={12} sm={6}>
-            <BadgeWrapper onClick={() => props.setBadge('trident')}>
-              <IconWrapper>
-                <GiTrident title="Trident" size="2rem" color="#C9B037" />
-              </IconWrapper>
-              Fund 1
-            </BadgeWrapper>
-          </CenteredGridCol>
           <CenteredGridCol xs={12} sm={6}>
             <BadgeWrapper onClick={() => props.setBadge('caesar')}>
               <IconWrapper>
-                <GiCaesar title="Caesar" size="2rem" color="#C9B037" />
+                <GiCaesar title="Largest fund" size="3rem" color="#C9B037" />
               </IconWrapper>
-              Fund 2
+              Rhino Fund
+            </BadgeWrapper>
+          </CenteredGridCol>
+          <CenteredGridCol xs={12} sm={6}>
+            <BadgeWrapper onClick={() => props.setBadge('trident')}>
+              <IconWrapper>
+                <GiTrident title="Trident" size="3rem" color="#C9B037" />
+              </IconWrapper>
+              Fund 1
             </BadgeWrapper>
           </CenteredGridCol>
         </GridRowWithPadding>
@@ -51,7 +53,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <CenteredGridCol xs={12} sm={6}>
             <BadgeWrapper onClick={() => props.setBadge('pegasus')}>
               <IconWrapper>
-                <GiPegasus title="Pegasus" size="2rem" color="#C9B037" />
+                <GiPegasus title="Pegasus" size="3rem" color="#C9B037" />
               </IconWrapper>
               Fund 3
             </BadgeWrapper>
@@ -59,7 +61,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <CenteredGridCol xs={12} sm={6}>
             <BadgeWrapper onClick={() => props.setBadge('atlas')}>
               <IconWrapper>
-                <GiAtlas title="Atlas" size="2rem" color="#C9B037" />
+                <GiAtlas title="Atlas" size="3rem" color="#C9B037" />
               </IconWrapper>
               Fund 4
             </BadgeWrapper>
@@ -69,7 +71,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <CenteredGridCol xs={12} sm={6}>
             <BadgeWrapper onClick={() => props.setBadge('spartan')}>
               <IconWrapper>
-                <GiSpartan title="Spartan" size="2rem" color="#C9B037" />
+                <GiSpartan title="Spartan" size="3rem" color="#C9B037" />
               </IconWrapper>
               Fund 5
             </BadgeWrapper>
@@ -77,14 +79,13 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
           <CenteredGridCol xs={12} sm={6}>
             <BadgeWrapper onClick={() => props.setBadge('centaur')}>
               <IconWrapper>
-                <GiCentaur title="Centaur" size="2rem" color="#C9B037" />
+                <GiCentaur title="Centaur" size="3rem" color="#C9B037" />
               </IconWrapper>
               Fund 6
             </BadgeWrapper>
           </CenteredGridCol>
         </GridRowWithPadding>
       </Grid>
-      <div onClick={() => props.setBadge('directory')}>Directory</div>
     </Block>
   );
 };

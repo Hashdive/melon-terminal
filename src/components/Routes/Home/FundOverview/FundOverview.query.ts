@@ -100,7 +100,7 @@ const FundOverviewQuery = gql`
           identifier
         }
       }
-      holdings(orderBy: assetGav, orderDirection: desc, first: 2) {
+      holdings(orderBy: assetGav, orderDirection: desc) {
         id
         amount
         assetGav

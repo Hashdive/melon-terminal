@@ -47,6 +47,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
       crosshairs: {
         width: 1,
       },
+      categories: labels,
     },
     colors: [theme.mainColors.primaryDark, '#aaaaaa'],
     tooltip: {
@@ -54,15 +55,22 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
       //   fixed: {
       //     enabled: false,
       //   },
-      x: {
-        show: false,
-      },
-      y: {
-        title: {
-          formatter: function (seriesName: any) {
-            return '';
-          },
-        },
+      //   x: {
+      //     show: false,
+      //   },
+      //   y: {
+      //     show: true,
+      //     formatter: function ({ series, seriesIndex, dataPointIndex, w }) {
+      //       return w?.globals.labels?.[dataPointIndex] + ': ' + series?.[seriesIndex]?.[dataPointIndex];
+      //     },
+      //   },
+      custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
+        return (
+          w?.globals.labels?.[dataPointIndex] +
+          ': ' +
+          parseFloat(series?.[seriesIndex]?.[dataPointIndex]).toFixed(2) +
+          '%'
+        );
       },
       marker: {
         show: false,
@@ -72,7 +80,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
 
   return (
     <Chart>
-      <ReactApexChart options={options} series={series} type="bar" width={40} />
+      <ReactApexChart options={options} series={series} type="bar" width={70} />
     </Chart>
   );
 

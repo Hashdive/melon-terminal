@@ -96,14 +96,20 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
     },
 
     {
-      Header: 'AUM [ETH]',
+      Header: 'AUM',
       accessor: 'eth',
       sortType: (rowA, rowB, columnId) => {
         const a = new BigNumber(rowA.values[columnId]);
         const b = new BigNumber(rowB.values[columnId]);
         return b.comparedTo(a);
       },
-      Cell: (cell) => <TokenValueDisplay value={cell.value} decimals={18} />,
+      Cell: (cell) => (
+        <>
+          <FormattedNumber value={fromTokenBaseUnit(cell.row.original.usd, 18)} decimals={0} suffix="$" />
+          <br />
+          <TokenValueDisplay value={cell.value} decimals={18} digits={0} symbol="Ξ" />
+        </>
+      ),
       cellProps: {
         style: {
           textAlign: 'right',
@@ -115,26 +121,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
         },
       },
     },
-    {
-      Header: 'AUM [$]',
-      accessor: 'usd',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
-      Cell: (cell) => <FormattedNumber value={fromTokenBaseUnit(cell.value, 18)} decimals={0} />,
-      cellProps: {
-        style: {
-          textAlign: 'right',
-        },
-      },
-      headerProps: {
-        style: {
-          textAlign: 'right',
-        },
-      },
-    },
+
     {
       Header: 'Since inception',
       accessor: 'returnSinceInception',
@@ -176,7 +163,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       },
     },
     {
-      Header: 'Top assets',
+      Header: 'Asset Allocation',
       accessor: 'holdings',
       disableSortBy: true,
       Cell: (cell) =>
@@ -190,14 +177,14 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
           textAlign: 'right',
           verticalAlign: 'middle',
           alignItems: 'center',
-          height: '100%',
+          height: '90%',
           paddingTop: 0,
           marginTop: 0,
         },
       },
       headerProps: {
         style: {
-          textAlign: 'right',
+          textAlign: 'center',
         },
       },
     },
@@ -237,17 +224,17 @@ function useTableDate() {
   const rates = useRatesOrThrow();
   const environment = useEnvironment()!;
   const [version] = useVersionQuery();
+  const tokens = environment.tokens.filter((token) => !token.historic);
 
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
+
     return funds.map<RowData>((item, index) => {
-      const holdings = item.holdings
-        .filter((item) => !new BigNumber(item.assetGav).isZero())
-        .map((item) => {
-          const token = environment.getToken(item.asset.symbol);
-          const quantity = item.assetGav;
-          return new TokenValue(token, quantity);
-        });
+      const holdings = tokens.map((token) => {
+        const tokenHolding = item.holdings.find((holding) => holding.asset.id === token.address);
+        const quantity = tokenHolding ? tokenHolding.assetGav : 0;
+        return new TokenValue(token, quantity);
+      });
 
       const eth = item.gav;
       const usd = new BigNumber(item.gav).multipliedBy(rates.ETH.USD);

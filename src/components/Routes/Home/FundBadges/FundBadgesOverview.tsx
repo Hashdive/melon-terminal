@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GiAtlas, GiCaesar, GiCentaur, GiPegasus, GiSpartan, GiTrident, GiInfo } from 'react-icons/gi';
+import { GiAtlas, GiCaesar, GiCentaur, GiPegasus, GiSpartanHelmet, GiTrojanHorse, GiInfo } from 'react-icons/gi';
 import styled from 'styled-components';
 import { Block } from '~/storybook/Block/Block';
 import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
@@ -42,7 +42,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
   return (
     <Block>
       <SectionTitle>
-        Badges of Honour <GiInfo onClick={() => props.setShowDirectory(true)} />
+        Leaderboard <GiInfo onClick={() => props.setShowDirectory(true)} />
       </SectionTitle>
       <Grid noGap={true}>
         <GridRow>
@@ -53,18 +53,18 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
               </BadgeIcon>
               <BadgeText>
                 <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+                <BadgeTextBadgeName>Highest AUM</BadgeTextBadgeName>
               </BadgeText>
             </BadgeWrapper>
-          </GridCol>
+          </GridCol>{' '}
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiTrident title="Trident" size="4rem" />
+                <GiSpartanHelmet title="Spartan" size="4rem" />
               </BadgeIcon>
               <BadgeText>
                 <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
+                <BadgeTextBadgeName>Best MTD performance</BadgeTextBadgeName>
               </BadgeText>
             </BadgeWrapper>
           </GridCol>
@@ -77,7 +77,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
               </BadgeIcon>
               <BadgeText>
                 <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Trident Shield</BadgeTextBadgeName>
+                <BadgeTextBadgeName>Best 1d performance</BadgeTextBadgeName>
               </BadgeText>
             </BadgeWrapper>
           </GridCol>
@@ -88,16 +88,16 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
               </BadgeIcon>
               <BadgeText>
                 <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Atlas</BadgeTextBadgeName>
+                <BadgeTextBadgeName>Latest launch</BadgeTextBadgeName>
               </BadgeText>
             </BadgeWrapper>
           </GridCol>
         </GridRow>
-        <GridRow>
+        {/* <GridRow>
           <GridCol xs={12} sm={6}>
             <BadgeWrapper>
               <BadgeIcon>
-                <GiSpartan title="Spartan" size="4rem" />
+                <GiTrojanHorse title="Trident" size="4rem" />
               </BadgeIcon>
               <BadgeText>
                 <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
@@ -116,7 +116,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
               </BadgeText>
             </BadgeWrapper>
           </GridCol>
-        </GridRow>
+        </GridRow> */}
       </Grid>
     </Block>
   );

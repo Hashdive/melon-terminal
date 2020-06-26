@@ -1,8 +1,14 @@
 import React from 'react';
+import * as R from 'ramda';
 import { TokenValue } from '~/TokenValue';
 import BigNumber from 'bignumber.js';
 import ReactApexChart from 'react-apexcharts';
 import styled, { useTheme } from 'styled-components';
+import { Icons } from '~/storybook/Icons/Icons';
+
+interface Serie {
+  data: number[];
+}
 
 export interface FundAllocationChartProps {
   gav: BigNumber;
@@ -15,55 +21,77 @@ export const Chart = styled.div`
   vertical-align: bottom;
   height: 100%;
   float: right;
+  padding-top: 5px;
 `;
 
 export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) => {
   const theme = useTheme();
 
-  const series = [
-    {
-      data: props.holdings.map((item) => item.value?.dividedBy(props.gav).multipliedBy(100).toNumber()),
-    },
-  ];
+  const percentages = props.holdings.map((item) =>
+    new BigNumber(item.value!).dividedBy(props.gav).multipliedBy(100).toNumber()
+  );
+
+  const series = percentages.reduce((carry, item, index) => {
+    const templateData = R.range(0, percentages.length).map((i) => 0);
+    templateData[index] = item;
+    return [...carry, { data: templateData }];
+  }, [] as Serie[]);
+
   const labels = props.holdings.map((item) => item.token.symbol);
 
   const options = {
     series,
+    colors: ['#D7D7D7', '#6A3805', '#C9B037', '#B4B4B4', '#AD8A56', '#AF9500'],
     chart: {
       type: 'bar',
-      width: 100,
-      height: 35,
+      stacked: true,
+      width: 150,
+      height: '100%',
       sparkline: {
         enabled: true,
       },
+      toolbar: {
+        show: false,
+      },
     },
-    // plotOptions: {
-    //   bar: {
-    //     columnWidth: '80%',
-    //   },
-    // },
-    labels,
+
+    dataLabels: {
+      enabled: false,
+    },
+
+    grid: {
+      show: false,
+    },
+
+    plotOptions: {
+      barHeight: '90%',
+    },
+
     xaxis: {
+      type: 'category',
       crosshairs: {
         width: 1,
       },
+      axisTicks: { show: false },
       categories: labels,
+      labels: {
+        show: false,
+        rotate: -90,
+        formatter: function (_: any, symbol: string) {
+          return symbol;
+        },
+      },
     },
-    colors: [theme.mainColors.primaryDark, '#aaaaaa'],
+    yaxis: {
+      // min: 0,
+      // max: 100,
+      labels: {
+        show: false,
+      },
+    },
+    // colors: [theme.mainColors.primaryDark, '#aaaaaa'],
     tooltip: {
       theme: theme.mode,
-      //   fixed: {
-      //     enabled: false,
-      //   },
-      //   x: {
-      //     show: false,
-      //   },
-      //   y: {
-      //     show: true,
-      //     formatter: function ({ series, seriesIndex, dataPointIndex, w }) {
-      //       return w?.globals.labels?.[dataPointIndex] + ': ' + series?.[seriesIndex]?.[dataPointIndex];
-      //     },
-      //   },
       custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
         return (
           w?.globals.labels?.[dataPointIndex] +
@@ -80,7 +108,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
 
   return (
     <Chart>
-      <ReactApexChart options={options} series={series} type="bar" width={70} />
+      <ReactApexChart options={options} series={series} type="bar" width={150} height={60} />
     </Chart>
   );
 

@@ -70,6 +70,12 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
 
     labels,
 
+    plotOptions: {
+      bar: {
+        columnWidth: '90%',
+      },
+    },
+
     grid: {
       padding: {
         top: 5,

@@ -31,21 +31,49 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
     [props.holdings, props.gav]
   );
 
-  const series = useMemo(
-    () =>
-      percentages.reduce((carry, item, index) => {
-        const templateData = R.range(0, percentages.length).map((i) => 0);
-        templateData[index] = item;
-        return [...carry, { data: templateData }];
-      }, [] as Serie[]),
-    [percentages]
-  );
+  const series = [{ data: percentages }];
+
+  // performance problems with this!!!
+  // const series = useMemo(
+  //   () =>
+  //     percentages.reduce((carry, item, index) => {
+  //       const templateData = R.range(0, percentages.length).map((i) => 0);
+  //       templateData[index] = item;
+  //       return [...carry, { data: templateData }];
+  //     }, [] as Serie[]),
+  //   [percentages]
+  // );
+
+  const colors = [
+    '#B4B4B4',
+    '#AD8A56',
+    '#AF9500',
+    '#D7D7D7',
+    '#C9B037',
+    '#6A3805',
+    '#B4B4B4',
+    '#AD8A56',
+    '#AF9500',
+    '#D7D7D7',
+    '#C9B037',
+    '#6A3805',
+    '#B4B4B4',
+    '#AD8A56',
+    '#AF9500',
+    '#D7D7D7',
+    '#C9B037',
+    '#6A3805',
+  ];
 
   const labels = props.holdings.map((item) => item.token.symbol);
 
   const options = {
     series,
-    colors: ['#D7D7D7', '#6A3805', '#C9B037', '#B4B4B4', '#AD8A56', '#AF9500'],
+    colors: [
+      function (args: any) {
+        return colors[args.dataPointIndex ?? 0];
+      },
+    ],
     chart: {
       type: 'bar',
       stacked: true,
@@ -55,6 +83,8 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
         enabled: true,
       },
     },
+
+    labels,
 
     xaxis: {
       type: 'category',

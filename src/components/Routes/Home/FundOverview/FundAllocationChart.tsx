@@ -99,7 +99,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
         return (
           w?.globals.labels?.[dataPointIndex] +
           ': ' +
-          parseFloat(series?.[seriesIndex]?.[dataPointIndex]).toFixed(2) +
+          parseFloat(series?.[seriesIndex]?.[dataPointIndex]).toFixed(4) +
           '%'
         );
       },
@@ -111,7 +111,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
 
   return (
     <Chart>
-      <ReactApexChart options={options} series={series} type="bar" width={150} height={40} />
+      <ReactApexChart options={options} series={series} type="bar" width={120} height={40} />
     </Chart>
   );
 };

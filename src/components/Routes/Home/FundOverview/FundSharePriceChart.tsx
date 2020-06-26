@@ -54,7 +54,8 @@ export const FundSharePriceChart: React.FC<FundSharePriceChartProps> = (props) =
 
     grid: {
       padding: {
-        top: 5,
+        top: 10,
+        bottom: 3,
       },
     },
 

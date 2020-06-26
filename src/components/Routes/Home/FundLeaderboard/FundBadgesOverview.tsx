@@ -42,7 +42,7 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
   return (
     <Block>
       <SectionTitle>
-        Leaderboard <GiInfo onClick={() => props.setShowDirectory(true)} />
+        Melon Leaderboard <GiInfo onClick={() => props.setShowDirectory(true)} />
       </SectionTitle>
       <Grid noGap={true}>
         <GridRow>
@@ -87,36 +87,12 @@ export const FundBadgesOverview: React.FC<FundBadgesOverviewProps> = (props) => 
                 <GiAtlas title="Atlas" size="4rem" />
               </BadgeIcon>
               <BadgeText>
-                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
+                <BadgeTextFundName>Full Auto Luxury Space Communism</BadgeTextFundName>
                 <BadgeTextBadgeName>Latest launch</BadgeTextBadgeName>
               </BadgeText>
             </BadgeWrapper>
           </GridCol>
         </GridRow>
-        {/* <GridRow>
-          <GridCol xs={12} sm={6}>
-            <BadgeWrapper>
-              <BadgeIcon>
-                <GiTrojanHorse title="Trident" size="4rem" />
-              </BadgeIcon>
-              <BadgeText>
-                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
-              </BadgeText>
-            </BadgeWrapper>
-          </GridCol>
-          <GridCol xs={12} sm={6}>
-            <BadgeWrapper>
-              <BadgeIcon>
-                <GiCentaur title="Centaur" size="4rem" />
-              </BadgeIcon>
-              <BadgeText>
-                <BadgeTextFundName>Rhino Fund</BadgeTextFundName>
-                <BadgeTextBadgeName>Trident Badge</BadgeTextBadgeName>
-              </BadgeText>
-            </BadgeWrapper>
-          </GridCol>
-        </GridRow> */}
       </Grid>
     </Block>
   );

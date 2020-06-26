@@ -42,9 +42,11 @@ import {
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { TableGlobalFilter } from './FundFilters';
 import { FundAllocationChart } from './FundAllocationChart';
+import { FundSharePriceChart } from './FundSharePriceChart';
 
 export type RowData = {
   rank: number;
+  age: number;
   address: string;
   name: string;
   inception: Date;
@@ -70,6 +72,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
           textAlign: 'left',
         },
       },
+
       Cell: (cell) => (
         <span>
           {cell.value}
@@ -121,7 +124,32 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
         },
       },
     },
-
+    {
+      Header: 'Asset Allocation',
+      accessor: 'holdings',
+      disableSortBy: true,
+      Cell: (cell) =>
+        !new BigNumber(cell.row.original.eth).isZero() ? (
+          <FundAllocationChart holdings={cell.value} gav={cell.row.original.eth} />
+        ) : (
+          <></>
+        ),
+      cellProps: {
+        style: {
+          textAlign: 'right',
+          verticalAlign: 'middle',
+          alignItems: 'center',
+          height: '90%',
+          paddingTop: 0,
+          marginTop: 0,
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'center',
+        },
+      },
+    },
     {
       Header: 'Since inception',
       accessor: 'returnSinceInception',
@@ -163,22 +191,17 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       },
     },
     {
-      Header: 'Asset Allocation',
-      accessor: 'holdings',
+      Header: 'Share price',
+      accessor: 'age',
       disableSortBy: true,
-      Cell: (cell) =>
-        !new BigNumber(cell.row.original.eth).isZero() ? (
-          <FundAllocationChart holdings={cell.value} gav={cell.row.original.eth} />
-        ) : (
-          <></>
-        ),
+      Cell: (cell) => <FundSharePriceChart address={cell.row.original.address} />,
       cellProps: {
         style: {
           textAlign: 'right',
           verticalAlign: 'middle',
           alignItems: 'center',
           height: '90%',
-          paddingTop: 0,
+          paddingTop: '5px',
           marginTop: 0,
         },
       },
@@ -188,6 +211,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
         },
       },
     },
+
     {
       Header: 'Invest',
       accessor: 'address',
@@ -249,8 +273,11 @@ function useTableDate() {
       const userWhitelist = !!item.policyManager.policies.find((policy) => policy.identifier === 'UserWhitelist');
       const closed = item.isShutdown || item.version?.name !== version?.name;
 
+      const age = (Date.now() / 1000 - item.createdAt) / (24 * 60 * 60);
+
       return {
         rank: index + 1,
+        age,
         address: item.id,
         name: item.name,
         inception: new Date(item.createdAt * 1000),

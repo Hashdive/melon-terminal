@@ -5,10 +5,6 @@ import BigNumber from 'bignumber.js';
 import ReactApexChart from 'react-apexcharts';
 import styled, { useTheme } from 'styled-components';
 
-interface Serie {
-  data: number[];
-}
-
 export interface FundAllocationChartProps {
   gav: BigNumber;
   holdings: TokenValue[];
@@ -18,9 +14,8 @@ export const Chart = styled.div`
   display: flex;
   flex-direction: column;
   vertical-align: bottom;
-  height: 100%;
+  height: 40px;
   float: right;
-  padding-top: 5px;
 `;
 
 export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) => {
@@ -32,17 +27,6 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
   );
 
   const series = [{ data: percentages }];
-
-  // performance problems with this!!!
-  // const series = useMemo(
-  //   () =>
-  //     percentages.reduce((carry, item, index) => {
-  //       const templateData = R.range(0, percentages.length).map((i) => 0);
-  //       templateData[index] = item;
-  //       return [...carry, { data: templateData }];
-  //     }, [] as Serie[]),
-  //   [percentages]
-  // );
 
   const colors = [
     '#B4B4B4',
@@ -75,16 +59,22 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
       },
     ],
     chart: {
+      animations: {
+        enabled: false,
+      },
       type: 'bar',
-      stacked: true,
-      width: 150,
-      height: '100%',
       sparkline: {
         enabled: true,
       },
     },
 
     labels,
+
+    grid: {
+      padding: {
+        top: 5,
+      },
+    },
 
     xaxis: {
       type: 'category',
@@ -121,7 +111,7 @@ export const FundAllocationChart: React.FC<FundAllocationChartProps> = (props) =
 
   return (
     <Chart>
-      <ReactApexChart options={options} series={series} type="bar" width={150} height={60} />
+      <ReactApexChart options={options} series={series} type="bar" width={150} height={40} />
     </Chart>
   );
 };
